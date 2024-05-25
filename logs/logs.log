@@ -1,0 +1,242 @@
+INFO-2024-04-01 18:12:35,400-Initiating WorkFlow...
+INFO-2024-04-01 18:12:35,401-Domain service for authentication is Google
+INFO-2024-04-01 18:12:35,411-Running google rest services to authenticate user
+INFO-2024-04-01 18:12:37,821-Getting google scholar email from user mailbox
+INFO-2024-04-01 18:12:39,621-Auth workflow complete. Messages from Google scholar received
+INFO-2024-04-01 18:12:39,627-Initiating Meta data extraction from email messages
+INFO-2024-04-01 18:12:43,417-Articles MetaData Extraction workflow complete.
+INFO-2024-04-01 18:12:44,425-Initiating call to the database table : Garticles for checks.
+INFO-2024-04-01 18:12:51,953-Running the crossref rest service workflow
+INFO-2024-04-01 18:21:47,873-Data Retrieval from CrossRef is complete.
+INFO-2024-04-01 18:21:48,921-Combining references with other meta data
+ERROR-2024-04-01 18:21:48,922-Could not combine references. Exception  list indices must be integers or slices, not str
+ERROR-2024-04-01 18:21:48,923-resultant_articles returned from _combine_references_with_other_metadata is not a dataframe
+INFO-2024-04-01 18:22:07,966-Initiating WorkFlow...
+INFO-2024-04-01 18:22:07,967-Initiating call to the database table : Garticles for retrieving data.
+INFO-2024-04-01 18:22:08,069-Data from database is acquired.
+INFO-2024-04-01 18:22:08,069-Initiating clustering workflow.
+INFO-2024-04-01 18:32:14,930-Initiating WorkFlow...
+INFO-2024-04-01 18:32:14,931-Initiating call to the database table : Garticles for retrieving data.
+INFO-2024-04-01 18:32:15,015-Data from database is acquired.
+INFO-2024-04-01 18:32:15,016-Initiating clustering workflow.
+INFO-2024-04-01 22:11:58,072-Initiating WorkFlow...
+INFO-2024-04-01 22:11:58,170-Domain service for authentication is Google
+INFO-2024-04-01 22:11:58,174-Running google rest services to authenticate user
+INFO-2024-04-01 22:11:58,733-Getting google scholar email from user mailbox
+INFO-2024-04-01 22:12:00,630-Auth workflow complete. Messages from Google scholar received
+INFO-2024-04-01 22:12:00,633-Initiating Meta data extraction from email messages
+INFO-2024-04-01 22:12:02,193-Articles MetaData Extraction workflow complete.
+INFO-2024-04-01 22:12:03,200-Initiating call to the database table : Garticles for checks.
+INFO-2024-04-01 22:12:09,782-Running the crossref rest service workflow
+INFO-2024-04-01 22:14:40,145-Initiating WorkFlow...
+INFO-2024-04-01 22:14:44,156-Domain service for authentication is Google
+INFO-2024-04-01 22:14:44,160-Running google rest services to authenticate user
+INFO-2024-04-01 22:15:09,397-Getting google scholar email from user mailbox
+INFO-2024-04-01 22:15:10,965-Auth workflow complete. Messages from Google scholar received
+INFO-2024-04-01 22:15:10,969-Initiating Meta data extraction from email messages
+INFO-2024-04-01 22:15:13,168-Articles MetaData Extraction workflow complete.
+INFO-2024-04-01 22:15:14,174-Initiating call to the database table : Garticles for checks.
+INFO-2024-04-01 22:15:26,647-Running the crossref rest service workflow
+INFO-2024-04-01 22:22:22,105-Data Retrieval from CrossRef is complete.
+INFO-2024-04-01 22:22:23,123-Combining references with other meta data
+INFO-2024-04-01 22:22:23,182-Reference Data merge with meta data is complete.
+INFO-2024-04-01 22:22:23,183-Initiating call to the database table : Garticles
+INFO-2024-04-01 22:22:23,290-Data is inserted in the database.
+INFO-2024-04-01 22:23:04,836-Initiating WorkFlow...
+INFO-2024-04-01 22:23:04,837-Initiating call to the database table : Garticles for retrieving data.
+INFO-2024-04-01 22:23:04,998-Data from database is acquired.
+INFO-2024-04-01 22:23:04,999-Initiating clustering workflow.
+INFO-2024-04-01 22:26:28,618-Initiating WorkFlow...
+INFO-2024-04-01 22:26:32,625-Domain service for authentication is Google
+INFO-2024-04-01 22:26:32,644-Running google rest services to authenticate user
+INFO-2024-04-01 22:26:47,762-Getting google scholar email from user mailbox
+INFO-2024-04-01 22:26:49,162-Auth workflow complete. Messages from Google scholar received
+INFO-2024-04-01 22:26:49,169-Initiating Meta data extraction from email messages
+INFO-2024-04-01 22:26:51,293-Articles MetaData Extraction workflow complete.
+INFO-2024-04-01 22:26:52,301-Initiating call to the database table : Garticles for checks.
+INFO-2024-04-01 22:27:01,698-Running the crossref rest service workflow
+INFO-2024-04-01 22:27:19,349-Data Retrieval from CrossRef is complete.
+INFO-2024-04-01 22:27:20,376-Combining references with other meta data
+ERROR-2024-04-01 22:27:20,377-Could not combine references. Exception  cannot set a frame with no defined index and a scalar
+ERROR-2024-04-01 22:27:20,377-resultant_articles returned from _combine_references_with_other_metadata is not a dataframe
+INFO-2024-04-01 22:35:00,569-Initiating WorkFlow...
+INFO-2024-04-01 22:35:04,580-Domain service for authentication is Google
+INFO-2024-04-01 22:35:04,585-Running google rest services to authenticate user
+INFO-2024-04-01 22:35:04,592-Getting google scholar email from user mailbox
+INFO-2024-04-01 22:35:06,239-Auth workflow complete. Messages from Google scholar received
+INFO-2024-04-01 22:35:06,248-Initiating Meta data extraction from email messages
+INFO-2024-04-01 22:35:07,108-Articles MetaData Extraction workflow complete.
+INFO-2024-04-01 22:35:08,118-Initiating call to the database table : Garticles for checks.
+INFO-2024-04-01 22:35:15,910-Phase 1 complete.
+INFO-2024-04-01 22:35:25,353-Initiating WorkFlow...
+INFO-2024-04-01 22:35:25,354-Initiating call to the database table : Garticles for retrieving data.
+INFO-2024-04-01 22:35:25,393-Data from database is acquired.
+INFO-2024-04-01 22:35:25,393-Initiating clustering workflow.
+INFO-2024-04-01 22:40:23,774-Clustering Workflow is complete.
+INFO-2024-04-04 22:35:25,935-Initiating WorkFlow...
+INFO-2024-04-04 22:35:29,982-Domain service for authentication is Google
+INFO-2024-04-04 22:35:29,993-Running google rest services to authenticate user
+INFO-2024-04-04 22:35:31,258-Getting google scholar email from user mailbox
+INFO-2024-04-04 22:35:33,790-Auth workflow complete. Messages from Google scholar received
+INFO-2024-04-04 22:35:33,795-Initiating Meta data extraction from email messages
+INFO-2024-04-04 22:35:37,398-Articles MetaData Extraction workflow complete.
+INFO-2024-04-04 22:35:38,415-Initiating call to the database table : Garticles for checks.
+INFO-2024-04-04 22:36:03,962-Running the crossref rest service workflow
+INFO-2024-04-04 22:40:23,435-Data Retrieval from CrossRef is complete.
+INFO-2024-04-04 22:40:24,447-Combining references with other meta data
+INFO-2024-04-04 22:40:24,637-Reference Data merge with meta data is complete.
+INFO-2024-04-04 22:40:24,637-Initiating call to the database table : Garticles
+INFO-2024-04-04 22:40:24,839-Data is inserted in the database.
+INFO-2024-04-04 22:40:25,870-Phase 1 complete.
+INFO-2024-04-04 22:40:44,361-Initiating WorkFlow...
+INFO-2024-04-04 22:40:44,361-Initiating call to the database table : Garticles for retrieving data.
+INFO-2024-04-04 22:40:44,716-Data from database is acquired.
+INFO-2024-04-04 22:40:44,716-Initiating clustering workflow.
+INFO-2024-04-04 22:40:51,625-Clustering Workflow is complete.
+INFO-2024-04-04 22:48:17,318-Initiating WorkFlow...
+INFO-2024-04-04 22:48:21,323-Domain service for authentication is Outlook
+INFO-2024-04-04 22:48:21,375-Running MS graph rest services to authenticate user
+INFO-2024-04-04 22:48:50,635-Getting google scholar email from user mailbox
+INFO-2024-04-04 22:49:45,213-Auth workflow complete. Messages from Google scholar received
+INFO-2024-04-04 22:49:45,215-Initiating Meta data extraction from email messages
+INFO-2024-04-04 22:50:07,999-Articles MetaData Extraction workflow complete.
+INFO-2024-04-04 22:50:09,015-Initiating call to the database table : articles for checks.
+INFO-2024-04-04 22:50:30,389-Running the crossref rest service workflow
+INFO-2024-04-04 22:53:38,062-Data Retrieval from CrossRef is complete.
+INFO-2024-04-04 22:53:39,087-Combining references with other meta data
+INFO-2024-04-04 22:53:39,241-Reference Data merge with meta data is complete.
+INFO-2024-04-04 22:53:39,241-Initiating call to the database table : articles
+INFO-2024-04-04 22:53:39,400-Data is inserted in the database.
+INFO-2024-04-04 22:53:40,417-Phase 1 complete.
+INFO-2024-04-04 22:54:20,741-Initiating WorkFlow...
+INFO-2024-04-04 22:54:20,742-Initiating call to the database table : articles for retrieving data.
+INFO-2024-04-04 22:54:21,809-Data from database is acquired.
+INFO-2024-04-04 22:54:21,810-Initiating clustering workflow.
+INFO-2024-04-04 23:14:12,374-Initiating WorkFlow...
+INFO-2024-04-04 23:14:16,389-Domain service for authentication is Outlook
+INFO-2024-04-04 23:14:16,411-Running MS graph rest services to authenticate user
+INFO-2024-04-04 23:14:46,547-Getting google scholar email from user mailbox
+INFO-2024-04-04 23:14:54,342-Auth workflow complete. Messages from Google scholar received
+INFO-2024-04-04 23:14:54,347-Initiating Meta data extraction from email messages
+INFO-2024-04-04 23:14:57,682-Articles MetaData Extraction workflow complete.
+INFO-2024-04-04 23:14:58,689-Initiating call to the database table : articles for checks.
+ERROR-2024-04-04 23:14:59,716-titles_not_in_db returned a None.
+INFO-2024-04-04 23:14:59,723-Running updates...
+INFO-2024-04-04 23:14:59,726-Initiating call to the database table : articles for updating data.
+INFO-2024-04-04 23:15:00,740-Phase 1 complete.
+INFO-2024-04-04 23:15:15,621-Initiating WorkFlow...
+INFO-2024-04-04 23:15:15,621-Initiating call to the database table : articles for retrieving data.
+INFO-2024-04-04 23:15:15,758-Data from database is acquired.
+INFO-2024-04-04 23:15:15,758-Initiating clustering workflow.
+INFO-2024-04-04 23:15:53,292-Clustering Workflow is complete.
+INFO-2024-04-05 00:41:17,081-Initiating WorkFlow...
+INFO-2024-04-05 00:41:21,105-Domain service for authentication is Outlook
+INFO-2024-04-05 00:41:21,109-Running MS graph rest services to authenticate user
+INFO-2024-04-05 00:42:17,491-Getting google scholar email from user mailbox
+INFO-2024-04-05 00:42:23,959-Auth workflow complete. Messages from Google scholar received
+INFO-2024-04-05 00:42:23,970-Initiating Meta data extraction from email messages
+INFO-2024-04-05 00:42:29,983-Articles MetaData Extraction workflow complete.
+INFO-2024-04-05 00:42:30,997-Initiating call to the database table : articles for checks.
+ERROR-2024-04-05 00:42:33,031-titles_not_in_db returned a None.
+INFO-2024-04-05 00:42:33,058-Running updates...
+INFO-2024-04-05 00:42:33,061-Initiating call to the database table : articles for updating data.
+INFO-2024-04-05 00:42:34,070-Phase 1 complete.
+INFO-2024-04-05 00:42:56,930-Initiating WorkFlow...
+INFO-2024-04-05 00:42:56,931-Initiating call to the database table : articles for retrieving data.
+INFO-2024-04-05 00:42:57,076-Data from database is acquired.
+INFO-2024-04-05 00:42:57,076-Initiating clustering workflow.
+INFO-2024-04-05 00:43:32,523-Clustering Workflow is complete.
+INFO-2024-04-05 15:59:07,775-Initiating WorkFlow...
+INFO-2024-04-05 15:59:11,938-Domain service for authentication is Google
+INFO-2024-04-05 15:59:11,951-Running google rest services to authenticate user
+INFO-2024-04-05 15:59:12,469-Getting google scholar email from user mailbox
+INFO-2024-04-05 15:59:15,695-Auth workflow complete. Messages from Google scholar received
+INFO-2024-04-05 15:59:15,711-Initiating Meta data extraction from email messages
+INFO-2024-04-05 15:59:20,545-Articles MetaData Extraction workflow complete.
+INFO-2024-04-05 15:59:21,559-Initiating call to the database table : Garticles for checks.
+INFO-2024-04-05 15:59:46,950-Running the crossref rest service workflow
+INFO-2024-04-05 16:00:19,968-Data Retrieval from CrossRef is complete.
+INFO-2024-04-05 16:00:21,023-Combining references with other meta data
+ERROR-2024-04-05 16:00:21,026-Could not combine references. Exception  cannot set a frame with no defined index and a scalar
+ERROR-2024-04-05 16:00:21,026-resultant_articles returned from _combine_references_with_other_metadata is not a dataframe
+INFO-2024-04-05 16:00:51,155-Initiating WorkFlow...
+INFO-2024-04-05 16:00:51,156-Initiating call to the database table : Garticles for retrieving data.
+INFO-2024-04-05 16:00:51,222-Data from database is acquired.
+INFO-2024-04-05 16:00:51,223-Initiating clustering workflow.
+INFO-2024-04-05 16:01:49,843-Initiating WorkFlow...
+INFO-2024-04-05 16:01:53,853-Domain service for authentication is Outlook
+INFO-2024-04-05 16:01:53,908-Running MS graph rest services to authenticate user
+INFO-2024-04-05 16:03:08,925-Getting google scholar email from user mailbox
+INFO-2024-04-05 16:03:24,273-Auth workflow complete. Messages from Google scholar received
+INFO-2024-04-05 16:03:24,291-Initiating Meta data extraction from email messages
+INFO-2024-04-05 16:03:29,524-Articles MetaData Extraction workflow complete.
+INFO-2024-04-05 16:03:30,540-Initiating call to the database table : articles for checks.
+ERROR-2024-04-05 16:03:34,288-titles_not_in_db returned a None.
+INFO-2024-04-05 16:03:34,305-Running updates...
+INFO-2024-04-05 16:03:34,335-Initiating call to the database table : articles for updating data.
+INFO-2024-04-05 16:03:35,363-Phase 1 complete.
+INFO-2024-04-05 16:03:56,651-Initiating WorkFlow...
+INFO-2024-04-05 16:03:56,651-Initiating call to the database table : articles for retrieving data.
+INFO-2024-04-05 16:03:56,749-Data from database is acquired.
+INFO-2024-04-05 16:03:56,750-Initiating clustering workflow.
+INFO-2024-04-05 16:04:39,496-Clustering Workflow is complete.
+INFO-2024-05-18 18:51:09,345-Initiating WorkFlow...
+INFO-2024-05-18 18:51:13,427-Domain service for authentication is Outlook
+INFO-2024-05-18 18:51:13,457-Running MS graph rest services to authenticate user
+INFO-2024-05-18 18:52:09,788-Getting google scholar email from user mailbox
+ERROR-2024-05-18 18:52:10,610-An error occurred: cannot unpack non-iterable NoneType object
+INFO-2024-05-18 18:53:09,154-Initiating WorkFlow...
+INFO-2024-05-18 18:53:09,154-Initiating call to the database table : articles for retrieving data.
+INFO-2024-05-18 18:53:10,143-Data from database is acquired.
+INFO-2024-05-18 18:53:10,143-Initiating clustering workflow.
+ERROR-2024-05-18 18:53:10,352-Could not run clustering workflow. Exception  Found array with 0 sample(s) (shape=(0, 0)) while a minimum of 1 is required by MDS.
+INFO-2024-05-18 22:18:07,782-Initiating WorkFlow...
+INFO-2024-05-18 22:18:11,828-Domain service for authentication is Outlook
+INFO-2024-05-18 22:18:11,828-Running MS graph rest services to authenticate user
+INFO-2024-05-18 22:18:29,871-Initiating WorkFlow...
+INFO-2024-05-18 22:18:29,947-Initiating call to the database table : articles for retrieving data.
+INFO-2024-05-18 22:18:35,609-Data from database is acquired.
+INFO-2024-05-18 22:18:35,609-Initiating clustering workflow.
+INFO-2024-05-18 22:20:17,098-Initiating WorkFlow...
+INFO-2024-05-18 22:20:17,098-Initiating call to the database table : articles for retrieving data.
+INFO-2024-05-18 22:20:17,122-Data from database is acquired.
+INFO-2024-05-18 22:20:17,123-Initiating clustering workflow.
+INFO-2024-05-18 22:23:44,583-Initiating WorkFlow...
+INFO-2024-05-18 22:23:48,611-Domain service for authentication is Outlook
+INFO-2024-05-18 22:23:48,611-Running MS graph rest services to authenticate user
+INFO-2024-05-18 22:24:03,270-Initiating WorkFlow...
+INFO-2024-05-18 22:24:03,271-Initiating call to the database table : articles for retrieving data.
+INFO-2024-05-18 22:24:05,502-Data from database is acquired.
+INFO-2024-05-18 22:24:05,502-Initiating clustering workflow.
+INFO-2024-05-18 22:25:50,582-Initiating WorkFlow...
+INFO-2024-05-18 22:25:54,596-Domain service for authentication is Outlook
+INFO-2024-05-18 22:25:54,643-Running MS graph rest services to authenticate user
+INFO-2024-05-18 22:27:59,796-Getting google scholar email from user mailbox
+ERROR-2024-05-18 22:28:00,122-An error occurred: cannot unpack non-iterable NoneType object
+INFO-2024-05-18 22:44:31,946-Initiating WorkFlow...
+INFO-2024-05-18 22:44:31,953-Initiating call to the database table : articles for retrieving data.
+INFO-2024-05-18 22:44:33,830-Data from database is acquired.
+INFO-2024-05-18 22:44:33,830-Initiating clustering workflow.
+INFO-2024-05-18 22:49:24,254-Initiating WorkFlow...
+INFO-2024-05-18 22:49:28,286-Domain service for authentication is Outlook
+INFO-2024-05-18 22:49:28,286-Running MS graph rest services to authenticate user
+INFO-2024-05-18 22:51:37,239-Getting google scholar email from user mailbox
+INFO-2024-05-18 22:52:02,528-Auth workflow complete. Messages from Google scholar received
+INFO-2024-05-18 22:52:02,877-Initiating Meta data extraction from email messages
+INFO-2024-05-18 22:52:15,813-Articles MetaData Extraction workflow complete.
+INFO-2024-05-18 22:52:16,821-Initiating call to the database table : articles for checks.
+ERROR-2024-05-18 23:03:11,891-An error occurred: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+INFO-2024-05-25 12:45:48,215-Initiating WorkFlow...
+INFO-2024-05-25 12:45:52,315-Domain service for authentication is Google
+INFO-2024-05-25 12:45:52,354-Running google rest services to authenticate user
+ERROR-2024-05-25 12:45:52,355-Could not run the rest service workflow to connect to Google. Exception : [Errno 2] No such file or directory: 'D:\\Big Data Anal\\Sem3\\ThesisProject\\ScienceSync\\modules\\secrets\\credentials.json'
+ERROR-2024-05-25 12:45:52,355-An error occurred: cannot unpack non-iterable NoneType object
+INFO-2024-05-25 12:47:18,538-Initiating WorkFlow...
+INFO-2024-05-25 12:47:22,553-Domain service for authentication is Google
+INFO-2024-05-25 12:47:22,701-Running google rest services to authenticate user
+ERROR-2024-05-25 12:47:22,702-Could not run the rest service workflow to connect to Google. Exception : [Errno 2] No such file or directory: 'D:\\Big Data Anal\\Sem3\\ThesisProject\\ScienceSync\\modules\\secrets\\credentials.json'
+ERROR-2024-05-25 12:47:22,702-An error occurred: cannot unpack non-iterable NoneType object
+INFO-2024-05-25 12:51:02,357-Initiating WorkFlow...
+INFO-2024-05-25 12:51:06,373-Domain service for authentication is Google
+INFO-2024-05-25 12:51:06,389-Running google rest services to authenticate user
+INFO-2024-05-25 12:51:47,727-Getting google scholar email from user mailbox
