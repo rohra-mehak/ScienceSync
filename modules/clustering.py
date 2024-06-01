@@ -4,15 +4,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from itertools import combinations
-from sklearn_extra.cluster import KMedoids, CLARA
+from sklearn_extra.cluster import KMedoids
 from sklearn.cluster import (
-    SpectralClustering,
     AgglomerativeClustering,
-    HDBSCAN, KMeans, BisectingKMeans
+KMeans, BisectingKMeans
 )
 from sklearn.metrics import (
     silhouette_score,
-    pairwise_distances,
     davies_bouldin_score,
     calinski_harabasz_score,
 )
@@ -357,138 +355,83 @@ if __name__ == "__main__":
 
     binary_array = np.array(binary_vectors)
     jaccard_distances = pdist(binary_array, metric='jaccard')
-    # print(jaccard_distances.shape)
-    distance_matrix = squareform(jaccard_distances)
-    print(len(df))
-    print(distance_matrix.shape)
+    print(jaccard_distances.shape)
+    s_matrix = squareform(jaccard_distances)
+    # print(len(df))
+    # print(distance_matrix.shape)
+    # s_matrix = np.nan_to_num(s_matrix, nan=0)
 
-    # s_matrix =  distance_matrix +1
-    for k in range(3,12):
-        # cluster = SpectralClustering(n_clusters=k,assign_labels = 'discretize',random_state = 42,affinity="precomputed")
-        # cluster.fit(s_matrix)
-        # cluster = KMedoids(n_clusters=k, method="alternate", init="k-medoids++", metric="precomputed",random_state=251524)
-        # cluster = KMedoids(n_clusters=k, method="pam",  metric="precomputed",
-        #                    random_state=251524)
-        cluster = AgglomerativeClustering(n_clusters=k, linkage="average", metric="precomputed")
-        cluster.fit(distance_matrix)
-        # cluster_titles = {i: [] for i in range(k)}
-        s = silhouette_score(distance_matrix, cluster.labels_, metric="precomputed")
-        dbi = davies_bouldin_score(binary_vectors, cluster.labels_)
-        chi = calinski_harabasz_score(binary_vectors, cluster.labels_)
-        cluster_titles = {i: [] for i in np.unique(cluster.labels_)}
-        print(k,s, dbi, chi)
-        # for i, label in enumerate(cluster.labels_):
-        #     cluster_titles[label].append(df['Title'].iloc[i])
+    dbi_scores = {}
+    sil_scores = {}
+    # for linkage in ["complete"]:
+    for linkage in ["agglomerative", "k-medoids", "k-means"]:
+        print(linkage)
+        dbi_scores_per_alg = []
+        sil_scores_per_alg = []
+
+        for k in range(3,15):
+            cluster = None
+            if linkage == "agglomerative":
+                cluster = AgglomerativeClustering(n_clusters=k, linkage="average")
+                cluster.fit(binary_array)
+            elif linkage == "k-medoids":
+                 cluster = KMedoids(n_clusters=k, method="pam", random_state=251524)
+                 cluster.fit(binary_array)
+
+            else:
+                cluster = KMeans(
+                    n_clusters=k, init= "k-means++", random_state=42, n_init='auto'
+                )
+                cluster.fit(binary_array)
+            # # cluster = KMedoids(n_clusters=k, method="pam", init="k-medoids++", metric="precomputed",random_state=251524)
+            # cluster = KMedoids(n_clusters=k, method="pam", random_state=251524)
+            # # cluster = KMeans(
+            # #     n_clusters=k, ini"k-means++", random_state=42, n_init='auto'
+            # # )
+            # # cluster = AgglomerativeClustering(n_clusters=k, linkage=linkage, metric="precomputed")
+            # cluster.fit(binary_array)
+            # cluster.fit(s_matrix)
+            # cluster_titles = {i: [] for i in range(k)}
+            s = silhouette_score(binary_array, cluster.labels_)
+            # s = silhouette_score(s_matrix, cluster.labels_, metric="precomputed")
+            dbi = davies_bouldin_score(binary_array, cluster.labels_)
+            chi = calinski_harabasz_score(binary_array, cluster.labels_)
+            # cluster_titles = {i: [] for i in np.unique(cluster.labels_)}
+            print(k,s, dbi, chi)
+            # for i, label in enumerate(cluster.labels_):
+            #     cluster_titles[label].append(df['Title'].iloc[i])
+            #
+            # for cluster_id, titles in cluster_titles.items():
+            #     print(f"Cluster {cluster_id}:")
+            #     for title in titles:
+            #         print(f"- {title}")
+            dbi_scores_per_alg.append(dbi)
+            sil_scores_per_alg.append(s)
+        dbi_scores[linkage] = dbi_scores_per_alg
+        sil_scores[linkage]= sil_scores_per_alg
+
+
+        # for s , v in score_sil_per_alg.items():
+        #     plt.plot(k_values, list(v.values()), label=f"{s}")
+        #     plt.xlabel('Number of Clusters')
+        #     plt.ylabel('Silhouette Score')
+        #     plt.title('Silhouette Score for Optimal Clusters')
+        #     plt.legend()
+        #     plt.show()
         #
-        # for cluster_id, titles in cluster_titles.items():
-        #     print(f"Cluster {cluster_id}:")
-        #     for title in titles:
-        #         print(f"- {title}")
+    for linkage, values in dbi_scores.items():
+        plt.plot(range(3,15),  list(values), label=f"{linkage}", marker="o")
+        plt.xlabel('Number of Clusters (k)')
+        plt.ylabel('DBI Score')
+        plt.title(f'Davies Bouldin Score for {linkage}model')
+        plt.legend()
+        plt.show()
 
-    # PARAM = (
-    #     {"min_cluster_size": 5, "min_samples": 5},
-    #     {"min_cluster_size": 5, "min_samples": 3},
-    #     {"min_cluster_size": 5, "min_samples": 25},
-    #     {"min_cluster_size": 6, "min_samples": 5},
-    #     {"min_cluster_size": 6, "min_samples": 3},
-    #     {"min_cluster_size": 6, "min_samples": 25},
-    #     {"min_cluster_size": 7, "min_samples": 5},
-    #     {"min_cluster_size": 7, "min_samples": 3},
-    #     {"min_cluster_size": 7, "min_samples": 25},
-    #     {"min_cluster_size": 8, "min_samples": 5},
-    #     {"min_cluster_size": 8, "min_samples": 3},
-    #     {"min_cluster_size": 8, "min_samples": 25},
-    #     {"min_cluster_size": 9, "min_samples": 5},
-    #     {"min_cluster_size": 9, "min_samples": 3},
-    #     {"min_cluster_size": 9, "min_samples": 25},
-    #     {"min_cluster_size": 10, "min_samples": 5},
-    #     {"min_cluster_size": 10, "min_samples": 3},
-    #     {"min_cluster_size": 10, "min_samples": 25},
-    #
-    # )
-    # for i, param in enumerate(PARAM):
-    #     print(param)
-    #     cluster = HDBSCAN(metric="precomputed", **param)
-    #     cluster.fit(distance_matrix)
-    #     # s = silhouette_score(distance_matrix, cluster.labels_, metric="precomputed")
-    #     dbi = davies_bouldin_score(binary_vectors, cluster.labels_)
-    #     chi = calinski_harabasz_score(binary_vectors, cluster.labels_)
-    #     print(param, dbi, chi)
-        # cluster_titles = {i: [] for i in np.unique(cluster.labels_)}
-        # for i, label in enumerate(cluster.labels_):
-        #     cluster_titles[label].append(df['Title'].iloc[i])
+    for linkage, values in sil_scores.items():
+        plt.plot(range(3,15),  list(values), label=f"{linkage}", marker="o")
+        plt.xlabel('Number of Clusters (k)')
+        plt.ylabel('Silhouette Score')
+        plt.title(f'Silhouette scores for {linkage} model')
+        plt.legend()
+        plt.show()
 
-        # for cluster_id, titles in cluster_titles.items():
-        #     print(f"Cluster {cluster_id}:")
-        #     for title in titles:
-        #         print(f"- {title}")
-
-    # print("matrix calculated")
-    #
-    # score_sil_per_alg = {}
-    # score_chi_per_alg = {}
-    # score_dbi_per_alg = {}
-    # inertia = []
-    # k_values = range(10,15)
-    # for alg in ["Medoids", "Agglo"]:
-    #     scores_sil = {}
-    #     scores_dbi = {}
-    #     scores_chi = {}
-    #     for k in k_values:
-    #             if alg == "Medoids":
-    #                 cluster = KMedoids(n_clusters=k, method="pam", metric="precomputed")
-    #                 cluster.fit(distance_matrix)
-    #                 inertia.append(cluster.inertia_)
-    #
-    #             elif alg == "Agglo":
-    #                 cluster = AgglomerativeClustering(n_clusters=k, linkage="average",metric="precomputed")
-    #                 cluster.fit(distance_matrix)
-    #             s = silhouette_score(distance_matrix, cluster.labels_, metric="precomputed")
-    #             dbi = davies_bouldin_score(binary_vectors, cluster.labels_)
-    #             chi = calinski_harabasz_score(binary_vectors, cluster.labels_)
-    #             print( alg, k, s, dbi, chi)
-    #             scores_sil[k] = s
-    #             scores_chi[k] = chi
-    #             scores_dbi[k] = dbi
-    #             cluster_titles = {i: [] for i in range(k)}
-    #             # Iterate through the data points and store titles for each cluster
-    #             for i, label in enumerate(cluster.labels_):
-    #                 cluster_titles[label].append(df['Title'].iloc[i])
-    #             for cluster_id, titles in cluster_titles.items():
-    #                 print(f"Cluster {cluster_id}:")
-    #                 for title in titles:
-    #                     print(f"- {title}")
-    #     score_sil_per_alg[alg] = scores_sil
-    #     score_chi_per_alg[alg] = scores_chi
-    #     score_dbi_per_alg[alg] = scores_dbi
-    # #
-    # for s , v in score_sil_per_alg.items():
-    #     plt.plot(k_values, list(v.values()), label=f"{s}")
-    #     plt.xlabel('Number of Clusters')
-    #     plt.ylabel('Silhouette Score')
-    #     plt.title('Silhouette Score for Optimal Clusters')
-    #     plt.legend()
-    #     plt.show()
-    #
-    # for s , v in score_dbi_per_alg.items():
-    #     plt.plot(k_values, list(v.values()), label=f"{s}")
-    #     plt.xlabel('Number of Clusters')
-    #     plt.ylabel('DBI score')
-    #     plt.title('DBi Score for Optimal Clusters')
-    #     plt.legend()
-    #     plt.show()
-    #
-    # for s , v in score_chi_per_alg.items():
-    #     plt.plot(k_values, list(v.values()), label=f"{s}")
-    #     plt.xlabel('Number of Clusters')
-    #     plt.ylabel('Chi score')
-    #     plt.title('chi Score for Optimal Clusters')
-    #     plt.legend()
-    #     plt.show()
-    #
-    # plt.plot(k_values, inertia, marker="o", label=f"KMedoids")
-    # plt.xlabel('Number of Clusters')
-    # plt.ylabel('inertia ')
-    # plt.title('elbow method')
-    # plt.legend()
-    # plt.show()

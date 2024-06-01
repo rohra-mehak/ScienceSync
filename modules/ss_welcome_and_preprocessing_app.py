@@ -40,12 +40,12 @@ class WelcomePage(customtkinter.CTk):
     def handle_service_button(self, event, service_button):
         if service_button.cget('state') == 'disabled':
             return
-        self.update_info_text("You will be redirected to authorization now")
+        self.update_info_text("Processes are complete. Please close this window to proceed")
         service_choice = service_button.cget("text")
         self.disable_authorization_options()
         self.select_service_choice.destroy()
         self.display_progress_bar()
-        time.sleep(3)
+        # time.sleep(3)
         if self.thread_target_task is not None:
             t = threading.Thread(target=self.thread_target_task, args=(service_choice, self, self.thread_target_task_arg_table, self.thread_target_task_arg_days))
             t.start()

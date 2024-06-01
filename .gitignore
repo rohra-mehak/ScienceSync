@@ -1,14 +1,15 @@
-# created by virtualenv automatically
-
 /venv/
 /static/
-/secrets/app-client_ids.json
-/secrets/credentials.json
-*.cfg
-*.pptx
 /Lib/
 /Scripts/
+/.idea/*
+
+
 /token.json
 /modules/token.json
-/.idea/*
+/secrets/app-client_ids.json
+/secrets/credentials.json
+
+*.cfg
+*.pptx
 *.pyc
