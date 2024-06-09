@@ -41,10 +41,10 @@ Results Display: The system provides intuitive visualization tools to display cl
 ## How To Run
 
 1. a. Download or clone the repository:
-    ```
+    ```bash
     git clone https://github.com/rohra-mehak/ScienceSync.git
     ```
-    ```
+    ```bash
     cd ScienceSync
     ```
 
@@ -61,12 +61,12 @@ Results Display: The system provides intuitive visualization tools to display cl
     Extract the ZIP file to your desired location.
 
 2. Navigate to the root folder directory:
-   ```
+   ```bash
    cd yourpath/to/ScienceSync
    ```
 
 3. Install all dependencies:
-   ```
+   ```bash
    pip install requirements.txt
    ```
 
