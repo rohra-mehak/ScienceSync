@@ -59,9 +59,6 @@ class GoogleAPI:
         """
         try:
             query = f"newer_than:{days_ago}d"
-            # TODO TEST THIS PIECE OF CODE
-            # if sender:
-            #     query += f" from:{sender}"
             page_token = None  # Initialize the page token
             filtered_messages = []
             while True:
@@ -77,7 +74,6 @@ class GoogleAPI:
 
                         if not sender or any(
                                 header['value'] == sender for header in headers if header['name'] == 'From'):
-                            # if not days_ago or self.check_days_ago(message_details, days_ago):
                             filtered_messages.append(message_details)
 
                     # Check if there are more pages of results
@@ -131,22 +127,6 @@ class GoogleAPI:
                                                tz=timezone.utc).date().strftime("%Y-%m-%d")
         }
         return message_json
-
-    def check_days_ago(self, message_details, days_ago):
-        """
-        Checks if an email message was received within the specified number of days.
-
-        Args:
-            message_details (dict): Details of the email message.
-            days_ago (int): Number of days ago.
-
-        Returns:
-            bool: True if the email message was received within the specified days, False otherwise.
-        """
-        received_time = int(message_details['internalDate']) / 1000
-        received_date = datetime.fromtimestamp(received_time, tz=timezone.utc).date()
-        days_difference = (datetime.now().date() - received_date).days
-        return days_difference <= days_ago
 
     def get_user_email_messages(self, sender, days_ago=7):
         """

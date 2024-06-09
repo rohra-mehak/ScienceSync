@@ -5,7 +5,7 @@ import customtkinter as ctk
 from tkinter import messagebox
 from modules.google_rest_service import GoogleAPI
 from modules.graph_rest_service import GraphAPI
-from modules.data_preprocessor_for_scholar_messages import DataExtractor
+from modules.data_extractor_for_scholar_messages import DataExtractor
 from modules.crossRef_rest_service import CrossRefAPI
 from modules.database_services import ArticleDatabase
 from modules.clustering import ClusterEngine

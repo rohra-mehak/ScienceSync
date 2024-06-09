@@ -51,13 +51,10 @@ class Log:
         logger.addHandler(file_handler)
 
         # Add a stream handler to log to the terminal
-
         stream_handler = logging.StreamHandler(sys.stdout)
         stream_handler.setLevel(logging.INFO)
         stream_handler.setFormatter(formatter)
         logger.addHandler(stream_handler)
-            # stream_handler.setConsoleLevel(logging.ERROR)
-
         return logger
 
     def info(self, message):

@@ -3,6 +3,7 @@ from modules.ss_results_app import DisplayResultsPage
 from modules.run_workflow import run_science_sync_workflow_phase_2
 from modules.run_workflow import run_science_sync_workflow_phase_1
 
+
 table_name = "articles"
 days_ago = 600
 

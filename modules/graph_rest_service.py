@@ -44,7 +44,6 @@ class GraphAPI:
         app = PublicClientApplication(client_id=self.client_id)
         flow = app.initiate_device_flow(scopes=self.scopes)
         self.user_code = flow['user_code']
-        print(self.user_code)
         return app, flow
 
     def acquire_access_token(self, app, flow):
@@ -113,68 +112,10 @@ class GraphAPI:
                 break
         return messages
 
-    def check_days_ago(self, email, days_ago):
-        """
-        Checks if an email was received within the specified number of days.
-
-        Args:
-            email (dict): Email metadata.
-            days_ago (int): Number of days ago.
-
-        Returns:
-            bool: True if email was received within the specified days, False otherwise.
-        """
-        received_date = email['receivedDateTime']
-        received_datetime = datetime.strptime(received_date, '%Y-%m-%dT%H:%M:%SZ')
-        days_difference = (datetime.utcnow() - received_datetime).days
-        return days_difference <= days_ago
-
-
-class CodeWindow:
-    """
-    A class for managing the GUI window to display user code during device flow authentication.
-
-    Attributes:
-        root (tk.Tk): Tkinter root window.
-        code (str): User code to be displayed.
-    """
-
-    def __init__(self, root, code):
-        """
-        Initializes the CodeWindow object.
-
-        Args:
-            root (tk.Tk): Tkinter root window.
-            code (str): User code to be displayed.
-        """
-        self.root = root
-        self.root.title("Your Code Is")
-        self.root.geometry("500x400")
-        self.code = code
-
-        self.code_label = CTkLabel(self.root, text=self.code, font=("Helvetica", 30), cursor="hand2")
-        self.code_label.pack(pady=20)
-        self.label = CTkLabel(self.root,
-                              text="Enter the code displayed here on the next sign in window. \n Click copy then close the window.",
-                              font=("Helvetica", 12))
-        self.label.pack(pady=40)
-        copy_button = CTkButton(self.root, text="Copy", command=self.copy_and_close)
-        copy_button.pack()
-
-    def copy_and_close(self):
-        """
-        Copies the user code to the clipboard and closes the window.
-        """
-        code_to_copy = self.code_label.cget("text")
-        self.root.clipboard_clear()
-        self.root.clipboard_append(code_to_copy)
 
 
 if __name__ == "__main__":
-    # date_to_compare = datetime(2022, 12, 12)
-    # current_date = datetime.now()
-    # days_difference = (current_date - date_to_compare).days
-    # print(f"October 1, 2022, was {days_difference} days ago.")
+    # example usage
     path = os.path.join(os.getcwd(), "secrets", "app-client_ids.json")
     with open(path) as json_file:
         data = json.load(json_file)
