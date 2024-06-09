@@ -210,15 +210,12 @@ class ClusterEngine:
 
 
 if __name__ == "__main__":
-
+    # example usage
     table_name = "articles"
-    start_date = "2022-02-01"
-    end_date = "2022-06-30"
-
+    start_date , end_date = "2022-02-01",  "2022-06-30"
     filepath = os.path.join(dirname(dirname(abspath(__file__))), "database", "articles.db")
     db = ArticleDatabase(db_file=filepath, table_name=table_name)
     data = db.get_all_rows_into_df(table_name, start_date, end_date)
     db.close_connection()
-
     cc = ClusterEngine(data)
     cc.perform_clustering(data, n_clusters=8, method="KMedoids", metric="jaccard")

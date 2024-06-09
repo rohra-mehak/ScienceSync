@@ -288,7 +288,6 @@ def run_science_sync_workflow_phase_1(service_choice, app, table_name, days_ago)
     - days_ago (int): Number of days back to retrieve data (default: 30).
     """
     workflow = ScienceSyncWorkflow()
-    table_name = table_name
     try:
         title_list, articles_full, _ = _acquire_data(workflow, service_choice, app, days_ago)
         app.update_info_text(f"{len(title_list)} number of articles acquired")
