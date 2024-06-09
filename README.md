@@ -64,6 +64,16 @@ Results Display: The system provides intuitive visualization tools to display cl
    ```bash
    cd yourpath/to/ScienceSync
    ```
+   
+   ```bash
+   mkdir secrets
+   ```
+   
+   ```bash
+   mkdir database
+   ```
+   
+
 
 3. Install all dependencies:
    ```bash

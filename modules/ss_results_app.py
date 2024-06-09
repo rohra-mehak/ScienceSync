@@ -14,6 +14,7 @@ def read_titles_metadata():
     titles_metadata_df = pd.read_csv('googlearticles.csv')
     return titles_metadata_df
 
+
 def callback(url):
     webbrowser.open_new(url)
 
@@ -115,12 +116,12 @@ class DisplayResultsPage(customtkinter.CTk):
         frame.grid_rowconfigure(4, weight=1)
         return frame
 
-
     def display_all_data_grid(self):
         all_cluster_button = customtkinter.CTkButton(self.clusters_frame, text="All")
         all_cluster_button.bind('<Button-1>',
                                 lambda e, b=all_cluster_button: self.handle_cluster_button_click(b.cget('text')))
         all_cluster_button.grid(padx=20, pady=20)
+
     def display_clusters_grid(self):
         for cluster in self.clusters_df["Group"].unique().tolist():
             cluster_button = customtkinter.CTkButton(self.clusters_frame, text=f'Group {cluster}')

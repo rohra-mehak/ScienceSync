@@ -12,7 +12,6 @@ from modules.clustering import ClusterEngine
 from modules.data_delivery_service import DataDeliveryManager
 from modules.logger import Log
 
-
 class ScienceSyncWorkflow:
     """
     Class to encapsulate the ScienceSync workflow.
@@ -21,22 +20,6 @@ class ScienceSyncWorkflow:
     def __init__(self):
         self.log = Log.get_logger('logs')
         self.log.info("Initiating WorkFlow...")
-
-    def code_window(self, code):
-        """
-        Display a window to show the authentication code.
-
-        Args:
-            code (str): The authentication code.
-        """
-        try:
-            self.log.info("Running Display user code for Outlook authentication")
-            root = ctk.CTk()
-            app = MSAuthCodeWindow(root, code)
-            root.mainloop()
-        except Exception as e:
-            self.log.error(f"running code window failed with Exception {e}")
-            return False
 
     def run_rest_service_workflow(self, service_choice, days_ago, app):
         """
@@ -74,7 +57,6 @@ class ScienceSyncWorkflow:
                                                                         days_ago=days_ago)
             else:
                 self.log.error("The choice of domain are restricted to Google or Microsoft Outlook")
-                return
             return messages
         except Exception as e:
             self.log.error(f"Could not run the rest service workflow to connect to {service_choice}. Exception : {e}")
