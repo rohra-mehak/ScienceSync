@@ -1,9 +1,10 @@
 import os
-import tkinter as tk
 import json
 import pandas as pd
+import customtkinter as ctk
+from tkinter import messagebox
 from modules.google_rest_service import GoogleAPI
-from modules.graph_rest_service import GraphAPI, CodeWindow
+from modules.graph_rest_service import GraphAPI
 from modules.data_preprocessor_for_scholar_messages import DataExtractor
 from modules.crossRef_rest_service import CrossRefAPI
 from modules.database_services import ArticleDatabase
@@ -30,14 +31,14 @@ class ScienceSyncWorkflow:
         """
         try:
             self.log.info("Running Display user code for Outlook authentication")
-            root = tk.Tk()
-            app = CodeWindow(root, code=code)
+            root = ctk.CTk()
+            app = MSAuthCodeWindow(root, code)
             root.mainloop()
         except Exception as e:
             self.log.error(f"running code window failed with Exception {e}")
             return False
 
-    def run_rest_service_workflow(self, service_choice, days_ago):
+    def run_rest_service_workflow(self, service_choice, days_ago, app):
         """
         Run the REST service workflow based on the chosen domain.
 
@@ -59,14 +60,15 @@ class ScienceSyncWorkflow:
                                                                         '<scholaralerts-noreply@google.com>',
                                                                  days_ago=days_ago)
             elif service_choice == "Outlook":
-                path = os.path.join(os.getcwd(), "secrets", "app-client_ids.json")
+                path = os.path.join(os.getcwd(), "secrets", "credentials_msgraph.json")
                 with open(path) as json_file:
                     data = json.load(json_file)
                 app_id = data["application_id"]
                 self.log.info("Running MS graph rest services to authenticate user")
                 graph_client = GraphAPI(app_id)
-                app, flow = graph_client.init_flow()
-                graph_client.acquire_access_token(app, flow)
+                graph_app, flow = graph_client.init_flow()
+                app.update_info_text(f"Please refer to the following user code: {graph_client.user_code}")
+                graph_client.acquire_access_token(graph_app, flow)
                 self.log.info("Getting google scholar email from user mailbox")
                 messages = graph_client.get_user_email_via_rest_service(sender='scholaralerts-noreply@google.com',
                                                                         days_ago=days_ago)
@@ -121,7 +123,7 @@ class ScienceSyncWorkflow:
             self.log.error(f"Could not run the crossref rest service workflow {e}")
             return
 
-    def combine_references_with_other_data(self, retrieved_info, articles_data):
+    def run_update_article_tables_with_references(self, retrieved_info, table_name):
         """
         Combine retrieved reference information with other article data.
 
@@ -133,19 +135,18 @@ class ScienceSyncWorkflow:
             DataFrame: Combined DataFrame.
         """
         try:
-            resultant_articles = articles_data
-            self.log.info("Combining references with other meta data")
+            self.log.info("updating references of titles in database")
+            db = ArticleDatabase(table_name=table_name)
             for entry in retrieved_info:
                 title = entry["Title"]
                 doi = entry["Journal_Info"][0]['DOI']
                 references = entry["Journal_Info"][0]['references']
-                resultant_articles.loc[resultant_articles["Title"] == title, "DOI"] = doi
-                resultant_articles.loc[resultant_articles["Title"] == title, "ArticleReferences"] = ", ".join(
-                    [x for x in references if x is not None])
-            return resultant_articles
+                db.update_doi_references(table_name, title_val=title, doi_val=doi, references_val=references)
+            db.close_connection()
+            return  True
         except Exception as e:
             self.log.error(f"Could not combine references. Exception  {e}")
-            return
+            return False
 
     def run_insert_data_into_database(self, df, table_name):
         """
@@ -219,7 +220,7 @@ class ScienceSyncWorkflow:
             self.log.error(f"Could not update the data with the given dates. Exception  {e}")
             return False
 
-    def run_clustering_workflow(self, data, method="KMeans", n_clusters=10):
+    def run_clustering_workflow(self, data, method, n_clusters, metric):
         """
         Run the clustering workflow.
 
@@ -231,15 +232,14 @@ class ScienceSyncWorkflow:
         try:
             self.log.info(f"Initiating clustering workflow.")
             cluster_engine = ClusterEngine(data)
-            similarity_df = cluster_engine.calculate_jaccard_similarity()
-            results, _, _, _ = cluster_engine.perform_clustering(similarity_df=similarity_df, n_clusters=n_clusters,
-                                                                 method=method)
+
+            results = cluster_engine.perform_clustering(data=data, method=method, n_clusters=n_clusters, metric=metric)
             results_dataframe = pd.DataFrame([(key, title) for key, titles in results.items() for title in titles],
                                              columns=["Group", "Title"])
             return results_dataframe
         except Exception as e:
             self.log.error(f"Could not run clustering workflow. Exception  {e}")
-            return
+            return None
 
     def run_data_delivery_workflow(self, data, preference):
         """
@@ -256,6 +256,34 @@ class ScienceSyncWorkflow:
         except Exception as e:
             self.log.error(f"Could not run data delivery workflow. Exception  {e}")
             return
+
+
+
+
+class MSAuthCodeWindow:
+    def __init__(self, root, number):
+        self.root = root
+        self.root.title("Number Display")
+        self.root.geometry("200x200")  # Set the window size to 200x200
+        self.number = number
+
+        self.create_widgets()
+
+    def create_widgets(self):
+        # Create a label to display the number
+        self.label = ctk.CTkLabel(self.root, text=f"Number: {self.number}", font=('Arial', 14))
+        self.label.pack(pady=20)  # Adjusted padding for better appearance
+
+        # Create a button to copy the number to the clipboard and close the window
+        self.copy_button = ctk.CTkButton(self.root, text="Copy to Clipboard", command=self.copy_and_close)
+        self.copy_button.pack(pady=20)  # Adjusted padding for better appearance
+
+    def copy_and_close(self):
+        self.root.clipboard_clear()
+        self.root.clipboard_append(str(self.number))
+        messagebox.showinfo("Copied", "Code copied to clipboard")
+        self.root.destroy()
+
 
 
 if __name__ == '__main__':

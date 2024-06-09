@@ -5,7 +5,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 
 
-def _get_messages(workflow, service_choice ,days_ago):
+def _get_messages(workflow, service_choice ,days_ago, app):
     """
     Retrieve messages from a specified service.
 
@@ -17,7 +17,7 @@ def _get_messages(workflow, service_choice ,days_ago):
     Returns:
     - List: Messages retrieved from the service.
     """
-    return workflow.run_rest_service_workflow(service_choice=service_choice, days_ago=days_ago)
+    return workflow.run_rest_service_workflow(service_choice=service_choice, days_ago=days_ago, app=app)
 
 
 def _extract_metadata(workflow, messages, service_choice):
@@ -66,7 +66,7 @@ def _acquire_references_from_crossref(workflow, titles_not_in_db):
         return workflow.run_crossref_rest_service_workflow(article_titles=titles_not_in_db)
 
 
-def _combine_references_with_metadata_and_insert(workflow, articles_full, titles_not_in_db, reference_info, table_name):
+def _update_article_table_with_references(workflow, reference_info, table_name):
     """
     Combine references with metadata and insert into the database.
 
@@ -80,13 +80,8 @@ def _combine_references_with_metadata_and_insert(workflow, articles_full, titles
     Returns:
     - bool: True if insertion is successful, False otherwise.
     """
-    res_articles = articles_full[articles_full['Title'].isin(titles_not_in_db)]
-    resultant_articles = workflow.combine_references_with_other_data(reference_info, res_articles)
-    if not isinstance(resultant_articles, pd.DataFrame):
-        workflow.log.error("resultant_articles returned from _combine_references_with_other_metadata is not a dataframe")
-        return
-    workflow.log.info("Reference Data merge with meta data is complete.")
-    return workflow.run_insert_data_into_database(resultant_articles, table_name)
+    return workflow.run_update_article_tables_with_references(retrieved_info=reference_info, table_name=table_name)
+
 
 
 def _get_data_from_database(workflow, table_name, start_date, end_date):
@@ -154,9 +149,10 @@ def _acquire_data(workflow, service_choice, app, days_ago):
         return
 
     workflow.log.info(f"Domain service for authentication is {service_choice}")
-    app.update_info_text("Acquired email data")
-    msgs = _get_messages(workflow, service_choice, days_ago)
+    app.update_info_text("Acquiring E-mail data")
+    msgs = _get_messages(workflow, service_choice, days_ago, app)
     if not msgs:
+        app.update_info_text("No messages found. Please check your e-mails in the given days")
         return
     workflow.log.info("Auth workflow complete. Messages from Google scholar received")
     app.update_info_text("Running meta data extraction workflow")
@@ -228,7 +224,7 @@ def _get_additional_information_from_crossref(workflow, titles_not_in_db):
 
 
 def _acquire_data_from_database_and_make_cluster_analysis(workflow, table_name, start_date, end_date, method,
-                                                          n_clusters):
+                                                          n_clusters, metric):
     """
     Acquire data from the database and perform cluster analysis.
 
@@ -246,16 +242,16 @@ def _acquire_data_from_database_and_make_cluster_analysis(workflow, table_name, 
     df = _get_data_from_database(workflow, table_name=table_name, start_date=start_date,
                                  end_date=end_date)
     if not isinstance(df, pd.DataFrame):
-        return
+        return None , None
     workflow.log.info("Data from database is acquired.")
-    results = _perform_clustering(workflow, df, method=method, n_clusters=n_clusters)
+    results = workflow.run_clustering_workflow(data=df, method=method, n_clusters=n_clusters, metric=metric)
     if not isinstance(results, pd.DataFrame):
-        return
+        return None, df
     workflow.log.info("Clustering Workflow is complete.")
     return results, df
 
 
-def run_science_sync_workflow_phase_2(table_name, days_ago=14, method="KMeans", n_clusters=10):
+def run_science_sync_workflow_phase_2(table_name, days_ago, method , n_clusters, metric):
     """
     Run phase 2 of the Science Sync workflow.
 
@@ -276,12 +272,12 @@ def run_science_sync_workflow_phase_2(table_name, days_ago=14, method="KMeans", 
                                                                                               start_date=start_date,
                                                                                               end_date=end_date,
                                                                                               method=method,
-                                                                                              n_clusters=n_clusters)
-    time.sleep(2)
+                                                                                              n_clusters=n_clusters,
+                                                                                              metric=metric)
     return clustering_results, articles_full
 
 
-def run_science_sync_workflow_phase_1(service_choice, app, table_name, days_ago=30):
+def run_science_sync_workflow_phase_1(service_choice, app, table_name, days_ago):
     """
     Run phase 1 of the Science Sync workflow.
 
@@ -294,42 +290,44 @@ def run_science_sync_workflow_phase_1(service_choice, app, table_name, days_ago=
     workflow = ScienceSyncWorkflow()
     table_name = table_name
     try:
-        time.sleep(4)
         title_list, articles_full, _ = _acquire_data(workflow, service_choice, app, days_ago)
-        app.update_info_text("Articles Data Acquired")
-        time.sleep(1)
+        app.update_info_text(f"{len(title_list)} number of articles acquired")
+        workflow.log.info(f"{len(title_list)} number of articles acquired")
         titles_not_in_db = _check_database_for_existing_titles(workflow, title_list, table_name=table_name)
         articles_not_in_db = articles_full[articles_full["Title"].isin(titles_not_in_db)]
-        app.update_info_text("Checking Database for existing articles")
         if len(titles_not_in_db) > 0:
-            confirmation = input("continue processing ? Y or N")
+            workflow.run_insert_data_into_database(articles_not_in_db, table_name)
+            app.update_info_text(f"Need to retrieve references for {len(titles_not_in_db)} articles for similarity analysis out of . \n "
+                                 f"Please check the terminal window to provide confirmation")
+            confirmation = input(f"Need to retrieve refernces for {len(titles_not_in_db)} articles for similarity analysis.\n"
+                                 f"This process can take a few hours if a lot of data is required. Additionally,you can skip this and "
+                                 f"proceed to view summarised information. Do you wish to proceed ? Y/N?")
+
             if confirmation == "Y":
                 time.sleep(1)
-                app.update_info_text("Getting additional data :references for articles")
+                app.update_info_text("Retrieving references for articles")
                 references_info = _get_additional_information_from_crossref(workflow, titles_not_in_db)
-                app.update_info_text("References Acquired")
-                time.sleep(1)
-                app.update_info_text("inserting data in the database")
-                inserted = _combine_references_with_metadata_and_insert(workflow, articles_not_in_db, titles_not_in_db,
-                                                                        references_info, table_name=table_name)
-                if not inserted:
-                    return
-                workflow.log.info("Data is inserted in the database.")
+                if not references_info:
+                   workflow.log.info("There were no references retrieved for the given data")
+                else :
+                    updated = _update_article_table_with_references(workflow, references_info, table_name=table_name)
+                    if not updated:
+                        workflow.log.warning("references could not be loaded to the database")
             else:
-                pass
+                app.update_info_text("Inserting data without references")
+                workflow.run_insert_data_into_database(articles_not_in_db, table_name)
         else:
             workflow.log.info("Running updates...")
-            app.update_info_text("Articles already in the database.Making updates")
+            app.update_info_text("Articles already in the database. Making updates")
             articles_not_in_db_titles_and_date = articles_not_in_db[["Title", "ReceivedDate"]]
             _update_titles_date_in_database(workflow, table_name, articles_not_in_db_titles_and_date)
         app.update_info_text("full data acquisition is complete. will take a few mins to execute. please close this "
                              "window")
-        time.sleep(1)
         workflow.log.info("Phase 1 complete.")
 
     except Exception as e:
-        workflow.log.error(f"An error occurred: {e}")
+        workflow.log.error(f"An error occurred:{e}")
+        app.update_info_text(f"An error seems to have occured : {e}. Please close this window and try again after fixes.")
 
 
-if __name__ == '__main__':
-    pass
+

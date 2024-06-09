@@ -63,7 +63,7 @@ class GraphAPI:
         response = app.acquire_token_by_device_flow(flow)
         self.access_token = str(response.get('access_token'))
 
-    def get_user_email_via_rest_service(self, sender=None, days_ago=658):
+    def get_user_email_via_rest_service(self, days_ago, sender):
         """
         Retrieves user emails via Microsoft Graph REST services.
 

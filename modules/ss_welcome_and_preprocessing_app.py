@@ -40,8 +40,12 @@ class WelcomePage(customtkinter.CTk):
     def handle_service_button(self, event, service_button):
         if service_button.cget('state') == 'disabled':
             return
-        self.update_info_text("Processes are complete. Please close this window to proceed")
+
         service_choice = service_button.cget("text")
+        if service_choice != "Google":
+            self.update_info_text("You will be re-directed to authorisation now. Please check terminal window for USER CODE.")
+        else:
+            self.update_info_text("You will be re-directed to authorisation now.")
         self.disable_authorization_options()
         self.select_service_choice.destroy()
         self.display_progress_bar()

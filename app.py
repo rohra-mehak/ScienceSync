@@ -4,7 +4,7 @@ from modules.run_workflow import run_science_sync_workflow_phase_2
 from modules.run_workflow import run_science_sync_workflow_phase_1
 
 table_name = "articles"
-days_ago = 605
+days_ago = 600
 
 
 def run_science_sync_workflow_p1(service_choice=None, app=None, table_name=table_name, days_ago=days_ago):
@@ -14,6 +14,6 @@ def run_science_sync_workflow_p1(service_choice=None, app=None, table_name=table
 if __name__ == "__main__":
     app = WelcomePage(run_science_sync_workflow_p1, table_name, days_ago)
     app.mainloop()
-    grouped_clusters, articles_full = run_science_sync_workflow_phase_2(table_name=table_name, days_ago=days_ago, method="KMeans++",n_clusters=6)
+    grouped_clusters, articles_full = run_science_sync_workflow_phase_2(table_name=table_name, days_ago=days_ago, method="KMedoids",n_clusters=10, metric="jaccard")
     results_app = DisplayResultsPage(grouped_clusters, articles_full)
     results_app.mainloop()

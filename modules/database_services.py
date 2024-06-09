@@ -65,6 +65,26 @@ class ArticleDatabase:
               ", ".join(references_val), received_date_val))
         self.conn.commit()
 
+    def insert_article_without_references(self, title_val, authors_val, linktoArticle_val, abstract_val, cited_author_val, linktoSave_val,received_date_val):
+        """
+        Inserts a new article record into the database.
+
+        Args:
+            title_val (str): Title of the article.
+            authors_val (str): Authors of the article.
+            linktoArticle_val (str): Link to the article.
+            abstract_val (str): Abstract of the article.
+            cited_author_val (str): Cited author of the article.
+            linktoSave_val (str): Link for saving the article.
+            received_date_val (str) Date of receiving the article in the mail
+        """
+        self.cursor.execute("""
+            INSERT INTO articles (Title, Author, Link, Abstract, CitedAuthor, SaveLink, ReceivedDate)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (title_val, authors_val, linktoArticle_val, abstract_val, cited_author_val, linktoSave_val,
+              received_date_val))
+        self.conn.commit()
+
     def insert_dataframe_rows_to_table(self, table_name, dataframe: pd.DataFrame):
         """
         Inserts rows from a DataFrame into the specified table in the database.
@@ -150,9 +170,11 @@ class ArticleDatabase:
 
         self.cursor.execute(query, title_list)
         existing_titles = [row[0] for row in self.cursor.fetchall()]
+        print(len(existing_titles))
 
         # Return titles that don't exist
         missing_titles = [title for title in title_list if title not in existing_titles]
+        print(len(missing_titles))
         return missing_titles
 
     def update_received_date(self, table_name, title, received_date):
@@ -177,7 +199,6 @@ class ArticleDatabase:
 # Example usage:
 if __name__ == "__main__":
     db = ArticleDatabase(table_name="articles")
-    # Example usage goes here
     # e.g., data = db.get_all_rows_into_df("2022-04-03", '2022-05-03')
     # db.close_connection()
     # print(data)

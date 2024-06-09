@@ -7,7 +7,7 @@ from itertools import combinations
 from sklearn_extra.cluster import KMedoids
 from sklearn.cluster import (
     AgglomerativeClustering,
-KMeans, BisectingKMeans
+    KMeans
 )
 from sklearn.metrics import (
     silhouette_score,
@@ -16,31 +16,28 @@ from sklearn.metrics import (
 )
 import networkx as nx
 import community as community_louvain
-from sklearn.manifold import MDS
 import matplotlib.cm as cm
 from modules.database_services import ArticleDatabase
 from scipy.spatial.distance import pdist, squareform
-from sklearn.cluster import SpectralClustering
-
+import warnings
 
 class ClusterEngine:
     """
     Class for performing clustering analysis on article data.
 
     Attributes:
-        data (pd.DataFrame): DataFrame containing article data.
+        articles_data (pd.DataFrame): DataFrame containing article data.
 
     Methods:
-        jaccard_similarity(self, set1, set2): Compute Jaccard similarity between two sets.
-        calculate_jaccard_similarity(self): Calculate Jaccard similarity between articles based on DOI sets.
-        perform_clustering(self, similarity_df, n_clusters=15, method="KMeans"):
+        jaccard_similarity(set1, set2): Compute Jaccard similarity between two sets.
+        calculate_jaccard_similarity(): Calculate Jaccard similarity between articles based on DOI sets.
+        perform_clustering(data, n_clusters=10, method="Agglomerative", metric="euclidean"):
             Perform clustering on the articles based on their similarities.
-        build_a_louvain_cluster(self, similarity_df): Build a Louvain cluster and visualize the graph.
-        analyse_cluster_results(self, clusters, data, method):
+        build_a_louvain_cluster(similarity_df): Build a Louvain cluster and visualize the graph.
+        analyse_cluster_results(clusters, data, method):
             Analyse the results of clustering.
-        analyse_optimal_cluster_number_k(self, min_k, max_k, similarity_dataframe, method="KMeans"):
+        analyse_optimal_cluster_number_k(min_k, max_k, similarity_dataframe, method="KMeans"):
             Find the optimal number of clusters based on silhouette scores.
-
     """
 
     def __init__(self, data):
@@ -49,7 +46,6 @@ class ClusterEngine:
 
         Args:
             data (pd.DataFrame): DataFrame containing article data.
-
         """
         self.articles_data = data
 
@@ -63,7 +59,6 @@ class ClusterEngine:
 
         Returns:
             float: Jaccard similarity between the sets.
-
         """
         intersection = len(set1.intersection(set2))
         union = len(set1.union(set2))
@@ -75,11 +70,9 @@ class ClusterEngine:
 
         Returns:
             pd.DataFrame: DataFrame containing Jaccard similarities between articles.
-
         """
         articles_df = self.articles_data
         df = articles_df[articles_df["ArticleReferences"].notnull()]
-        # df["DOI_Set"] = df["ArticleReferences"].apply(lambda x: set(x.split(",")))
         df.loc[:, "DOI_Set"] = df["ArticleReferences"].apply(lambda x: set(x.split(",")))
 
         similarities = []
@@ -95,113 +88,62 @@ class ClusterEngine:
         )
         non_zero_similarity_df = similarity_df[
             similarity_df["JaccardSimilarity"] != 0
-            ]
+        ]
         return non_zero_similarity_df
 
-    def perform_clustering(
-            self, similarity_df, n_clusters=8, method="KMeans", preference=None
-    ):
+    def perform_clustering(self, data, n_clusters=10, method="Agglomerative", metric="euclidean"):
         """
         Perform clustering on the articles based on their similarities.
 
         Args:
-            similarity_df (pd.DataFrame): DataFrame containing Jaccard similarities between articles.
-            n_clusters (int, optional): Number of clusters. Defaults to 15.
-            method (str, optional): Clustering algorithm to use. Defaults to "KMeans".algorithms choices are KMeans, KMeans++, Agglomerative, BisectKMeans, Affinity, KMedoids .
+            data (pd.DataFrame): DataFrame containing article data.
+            n_clusters (int, optional): Number of clusters. Defaults to 10.
+            method (str, optional): Clustering algorithm to use. Defaults to "Agglomerative". Options: "KMeans", "KMedoids", "Agglomerative".
+            metric (str, optional): Distance metric to use. Defaults to "euclidean". Options: "euclidean", "jaccard".
 
         Returns:
-            tuple: Tuple containing cluster results, cluster labels, data, and inertia.
-
+            dict: Dictionary containing cluster results.
         """
-        df = similarity_df
-        unique_titles = np.unique(
-            df[["ArticleTitle1", "ArticleTitle2"]].values
-        )
+        df = data[["Title", "ArticleReferences"]]
 
-        # Create an empty similarity matrix
-        n_titles = len(unique_titles)
-        similarity_matrix = np.zeros((n_titles, n_titles))
+        # Splitting the references into separate DOIs
+        df['ArticleReferences'] = df['ArticleReferences'].apply(
+            lambda x: [doi for doi in x.split(', ')] if x is not None else [])
 
-        # Populate the similarity matrix
-        for i, title1 in enumerate(unique_titles):
-            for j, title2 in enumerate(unique_titles):
-                if i == j:
-                    similarity_matrix[i, j] = 1.0
-                else:
-                    jaccard_similarity = df[
-                        (
-                                (df["ArticleTitle1"] == title1)
-                                & (df["ArticleTitle2"] == title2)
-                        )
-                        | (
-                                (df["ArticleTitle1"] == title2)
-                                & (df["ArticleTitle2"] == title1)
-                        )
-                        ]["JaccardSimilarity"].values
-                    if len(jaccard_similarity) > 0:
-                        similarity_matrix[i, j] = jaccard_similarity[0]
+        unique_dois = list(set([doi for dois in df['ArticleReferences'] for doi in dois if doi != "N/A"]))
 
-        distance_matrix = 1 - similarity_matrix
+        article_vectors = []
+        for _, row in df.iterrows():
+            binary_vector = [1 if doi in row['ArticleReferences'] else 0 for doi in unique_dois]
+            article_vectors.append(binary_vector)
 
-        # Fit clustering algorithms
-        kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init='auto')
-        agglomerative = AgglomerativeClustering(
-            n_clusters=n_clusters, affinity="precomputed", linkage="average"
-        )
-        kmeansplusplus = KMeans(
-            n_clusters=n_clusters, init="k-means++", random_state=42, n_init='auto'
-        )
-        bisecting_kmeans = BisectingKMeans(
-            n_clusters=n_clusters, random_state=42, n_init='auto'
-        )
-        k_medoids = KMedoids(
-            n_clusters=n_clusters, random_state=42, method="pam"
-        )
+        X = np.array(article_vectors)
 
         algorithms = {
-            "KMeans": kmeans,
-            "KMeans++": kmeansplusplus,
-            "Agglomerative": agglomerative,
-            "BisectKMeans": bisecting_kmeans,
-            "KMedoids": k_medoids,
+            "KMeans": KMeans(n_clusters=n_clusters, init="k-means++", n_init='auto') if metric == "euclidean" else None,
+            "KMedoids": KMedoids(n_clusters=n_clusters, method="pam") if metric == "euclidean" else KMedoids(
+                n_clusters=n_clusters, method="pam", metric="precomputed"),
+            "Agglomerative": AgglomerativeClustering(n_clusters=n_clusters, linkage="average") if metric == "euclidean" else AgglomerativeClustering(
+                n_clusters=n_clusters, linkage="complete", metric="precomputed")
         }
 
-        algorithm = algorithms[method]
-
-        embedded_points = None
-        inertia = None
-        X = None
-        if method in ["KMeans", "KMeans++", "BisectKMeans"]:
-            mds = MDS(
-                n_components=2, dissimilarity="precomputed"
-            )
-            embedded_points = mds.fit_transform(distance_matrix)
-            clusters = algorithm.fit_predict(embedded_points)
-            inertia = algorithm.inertia_
-            X = embedded_points
-        elif method == "KMedoids":
-            # dissimilarity = pairwise_distances(
-            #     distance_matrix, metric="precomputed"
-            # )
-            clusters = algorithm.fit_predict(distance_matrix)
-            X = distance_matrix
+        cluster = algorithms[method]
+        if metric != "euclidean":
+            jaccard_distances = pdist(X, metric='jaccard')
+            distance_matrix = squareform(jaccard_distances)
+            cluster.fit(distance_matrix)
         else:
-            clusters = algorithm.fit_predict(similarity_matrix)
-            X = similarity_matrix
+            cluster.fit(X)
 
-        unique_clusters = np.unique(clusters)
-        cluster_results = {}
+        cluster_groups = {i: [] for i in np.unique(cluster.labels_)}
+        for i, label in enumerate(cluster.labels_):
+            cluster_groups[label].append(df['Title'].iloc[i])
 
-        for cluster_num in unique_clusters:
-            cluster_indices = np.where(clusters == cluster_num)[0]
-            cluster_titles = [unique_titles[i] for i in cluster_indices]
-            cluster_results[cluster_num] = cluster_titles
-
-        for k, v in cluster_results.items():
-            print(k)
-            for vv in v:
-                print(vv)
-        return cluster_results, clusters, X, inertia
+        for cluster_id, titles in cluster_groups.items():
+            print(f"Cluster {cluster_id}:")
+            for title in titles:
+                print(f"- {title}")
+        return cluster_groups
 
     def build_a_louvain_cluster(self, similarity_df):
         """
@@ -209,7 +151,6 @@ class ClusterEngine:
 
         Args:
             similarity_df (pd.DataFrame): DataFrame containing Jaccard similarities between articles.
-
         """
         G = nx.Graph()
         for _, row in similarity_df.iterrows():
@@ -251,7 +192,6 @@ class ClusterEngine:
 
         Returns:
             tuple: Tuple containing silhouette score, Davies-Bouldin index, and Calinski-Harabasz index.
-
         """
         silhouette_avg, dbi_score, chi_score = None, None, None
         if len(np.unique(clusters)) > 1:
@@ -262,65 +202,17 @@ class ClusterEngine:
             else:
                 m = 1 - data
                 silhouette_avg = silhouette_score(m, clusters, metric='precomputed')
-                # silhouette_avg = silhouette_score(data, clusters)
                 dbi_score = davies_bouldin_score(data, clusters)
                 chi_score = calinski_harabasz_score(data, clusters)
         else:
             print(f"{method} Analysis Not applicable (only one cluster)")
         return silhouette_avg, dbi_score, chi_score
 
-    def analyse_optimal_cluster_number_k(
-            self, min_k, max_k, similarity_dataframe, method="KMeans"
-    ):
-        """
-        Find the optimal number of clusters based on silhouette scores.
-
-        Args:
-            min_k (int): Minimum number of clusters to consider.
-            max_k (int): Maximum number of clusters to consider.
-            similarity_dataframe (pd.DataFrame): DataFrame containing Jaccard similarities between articles.
-            method (str, optional): Clustering algorithm to use. Defaults to "KMeans".
-
-        """
-        k_values = range(min_k, max_k + 1)
-        silhouette_scores = []
-        sse = []
-
-        for k in k_values:
-            (
-                _,
-                cluster_labels,
-                data,
-                inertia,
-            ) = self.perform_clustering(
-                similarity_dataframe, n_clusters=k, method=method
-            )
-            silhouette_avg = silhouette_score(data, cluster_labels)
-            silhouette_scores.append(silhouette_avg)
-            sse.append(inertia)
-
-        # Plot silhouette scores
-        plt.plot(k_values, silhouette_scores, marker="o")
-        plt.xlabel("Number of clusters (k)")
-        plt.ylabel("Silhouette Score")
-        plt.title(
-            f"Silhouette Score vs. Number of Clusters for {method} algorithm"
-        )
-        plt.show()
-
-        # plot sse for the elbow method
-        plt.plot(k_values, sse)
-        plt.xlabel("Number of Clusters")
-        plt.ylabel("SSE")
-        plt.title(
-            f"Elbow Method- SSE Score vs. Number of Clusters for {method} algorithm"
-        )
-        plt.show()
-
 
 if __name__ == "__main__":
+
     table_name = "articles"
-    start_date = "2022-05-01"
+    start_date = "2022-02-01"
     end_date = "2022-06-30"
 
     filepath = os.path.join(dirname(dirname(abspath(__file__))), "database", "articles.db")
@@ -328,110 +220,5 @@ if __name__ == "__main__":
     data = db.get_all_rows_into_df(table_name, start_date, end_date)
     db.close_connection()
 
-    df = data[["Title", "ArticleReferences"]]
-
-    # Splitting the references into separate DOIs
-    df['ArticleReferences'] = df['ArticleReferences'].apply(
-        lambda x: [doi for doi in x.split(', ')] if x is not None else [])
-
-    unique_dois = list(set([doi for dois in df['ArticleReferences'] for doi in dois if doi != "N/A"]))
-
-    # Building the feature matrix
-    # feature_matrix = pd.DataFrame(index=df['Title'], columns=unique_dois)
-    #
-    # # Filling the feature matrix with 1s and 0s
-    # for idx, dois in enumerate(df['ArticleReferences']):
-    #     for doi in dois:
-    #         feature_matrix.at[df['Title'].iloc[idx], doi] = 1
-    #
-    # feature_matrix.fillna(0, inplace=True)
-
-    # feature_matrix.to_csv("feature_matrix.csv")
-
-    binary_vectors = []
-    for _, row in df.iterrows():
-        binary_vector = [1 if doi in row['ArticleReferences'] else 0 for doi in unique_dois]
-        binary_vectors.append(binary_vector)
-
-    binary_array = np.array(binary_vectors)
-    jaccard_distances = pdist(binary_array, metric='jaccard')
-    print(jaccard_distances.shape)
-    s_matrix = squareform(jaccard_distances)
-    # print(len(df))
-    # print(distance_matrix.shape)
-    # s_matrix = np.nan_to_num(s_matrix, nan=0)
-
-    dbi_scores = {}
-    sil_scores = {}
-    # for linkage in ["complete"]:
-    for linkage in ["agglomerative", "k-medoids", "k-means"]:
-        print(linkage)
-        dbi_scores_per_alg = []
-        sil_scores_per_alg = []
-
-        for k in range(3,15):
-            cluster = None
-            if linkage == "agglomerative":
-                cluster = AgglomerativeClustering(n_clusters=k, linkage="average")
-                cluster.fit(binary_array)
-            elif linkage == "k-medoids":
-                 cluster = KMedoids(n_clusters=k, method="pam", random_state=251524)
-                 cluster.fit(binary_array)
-
-            else:
-                cluster = KMeans(
-                    n_clusters=k, init= "k-means++", random_state=42, n_init='auto'
-                )
-                cluster.fit(binary_array)
-            # # cluster = KMedoids(n_clusters=k, method="pam", init="k-medoids++", metric="precomputed",random_state=251524)
-            # cluster = KMedoids(n_clusters=k, method="pam", random_state=251524)
-            # # cluster = KMeans(
-            # #     n_clusters=k, ini"k-means++", random_state=42, n_init='auto'
-            # # )
-            # # cluster = AgglomerativeClustering(n_clusters=k, linkage=linkage, metric="precomputed")
-            # cluster.fit(binary_array)
-            # cluster.fit(s_matrix)
-            # cluster_titles = {i: [] for i in range(k)}
-            s = silhouette_score(binary_array, cluster.labels_)
-            # s = silhouette_score(s_matrix, cluster.labels_, metric="precomputed")
-            dbi = davies_bouldin_score(binary_array, cluster.labels_)
-            chi = calinski_harabasz_score(binary_array, cluster.labels_)
-            # cluster_titles = {i: [] for i in np.unique(cluster.labels_)}
-            print(k,s, dbi, chi)
-            # for i, label in enumerate(cluster.labels_):
-            #     cluster_titles[label].append(df['Title'].iloc[i])
-            #
-            # for cluster_id, titles in cluster_titles.items():
-            #     print(f"Cluster {cluster_id}:")
-            #     for title in titles:
-            #         print(f"- {title}")
-            dbi_scores_per_alg.append(dbi)
-            sil_scores_per_alg.append(s)
-        dbi_scores[linkage] = dbi_scores_per_alg
-        sil_scores[linkage]= sil_scores_per_alg
-
-
-        # for s , v in score_sil_per_alg.items():
-        #     plt.plot(k_values, list(v.values()), label=f"{s}")
-        #     plt.xlabel('Number of Clusters')
-        #     plt.ylabel('Silhouette Score')
-        #     plt.title('Silhouette Score for Optimal Clusters')
-        #     plt.legend()
-        #     plt.show()
-        #
-    for linkage, values in dbi_scores.items():
-        plt.plot(range(3,15),  list(values), label=f"{linkage}", marker="o")
-        plt.xlabel('Number of Clusters (k)')
-        plt.ylabel('DBI Score')
-        plt.title(f'Davies Bouldin Score for {linkage}model')
-        plt.legend()
-        plt.show()
-
-    for linkage, values in sil_scores.items():
-        plt.plot(range(3,15),  list(values), label=f"{linkage}", marker="o")
-        plt.xlabel('Number of Clusters (k)')
-        plt.ylabel('Silhouette Score')
-        plt.title(f'Silhouette scores for {linkage} model')
-        plt.legend()
-        plt.show()
-
+    cc = ClusterEngine(data)
+    cc.perform_clustering(data, n_clusters=8, method="KMedoids", metric="jaccard")

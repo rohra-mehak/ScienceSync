@@ -1,3 +1,4 @@
+import os
 import webbrowser
 import customtkinter
 import pandas as pd
@@ -89,11 +90,11 @@ class DisplayResultsPage(customtkinter.CTk):
         self.title_metadata_frame = self.setup_frame(3, 1, column_span=1, frame_title='Article Information')
         self.window_metadata_frame = self.setup_frame(3, 1, row=5, frame_title='Settings')
         self.config_settings_tabs()
-        self.display_clusters_grid()
-
+        self.display_all_data_grid()
+        if clusters_df is not None:
+            self.display_clusters_grid()
         self.export_all_data = None
         self.export_groups = None
-
         self.titles_lists = []
 
     def setup_frame(self, column, column_weight, row=0, column_span=1, frame_title=''):
@@ -114,11 +115,13 @@ class DisplayResultsPage(customtkinter.CTk):
         frame.grid_rowconfigure(4, weight=1)
         return frame
 
-    def display_clusters_grid(self):
+
+    def display_all_data_grid(self):
         all_cluster_button = customtkinter.CTkButton(self.clusters_frame, text="All")
         all_cluster_button.bind('<Button-1>',
                                 lambda e, b=all_cluster_button: self.handle_cluster_button_click(b.cget('text')))
         all_cluster_button.grid(padx=20, pady=20)
+    def display_clusters_grid(self):
         for cluster in self.clusters_df["Group"].unique().tolist():
             cluster_button = customtkinter.CTkButton(self.clusters_frame, text=f'Group {cluster}')
             cluster_button.bind('<Button-1>',
@@ -218,5 +221,5 @@ def divide_list_into_chunks(lst, chunk_size):
 
 if __name__ == "__main__":
     # Example usage
-    app = DisplayResultsPage(read_clusters(), read_titles_metadata())
+    app = DisplayResultsPage(None, read_titles_metadata())
     app.mainloop()

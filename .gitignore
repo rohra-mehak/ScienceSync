@@ -3,12 +3,14 @@
 /Lib/
 /Scripts/
 /.idea/*
+/test/
 
 
 /token.json
 /modules/token.json
-/secrets/app-client_ids.json
-/secrets/credentials.json
+secrets/credentials_msgraph.json
+secrets/credentials.json
+database/articles.db
 
 *.cfg
 *.pptx
