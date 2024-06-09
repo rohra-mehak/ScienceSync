@@ -33,8 +33,10 @@ class Log:
             logging.Logger: The logger object.
 
         """
-        formatter = logging.Formatter('%(levelname)s-%(asctime)s-%(message)s')
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s')
+        FORMAT = '%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s'
         logger = logging.getLogger(filename)
+        logging.basicConfig(format=FORMAT)
         logger.setLevel(logging.DEBUG)
 
         logs_dir = os.path.join(os.getcwd(), "logs")

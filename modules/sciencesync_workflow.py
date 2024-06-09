@@ -1,8 +1,6 @@
 import os
 import json
 import pandas as pd
-import customtkinter as ctk
-from tkinter import messagebox
 from modules.google_rest_service import GoogleAPI
 from modules.graph_rest_service import GraphAPI
 from modules.data_extractor_for_scholar_messages import DataExtractor
@@ -59,7 +57,7 @@ class ScienceSyncWorkflow:
                 self.log.error("The choice of domain are restricted to Google or Microsoft Outlook")
             return messages
         except Exception as e:
-            self.log.error(f"Could not run the rest service workflow to connect to {service_choice}. Exception : {e}")
+            self.log.error(f"Could not run the rest service workflow to connect to {service_choice}. Exception :{e}")
             return
 
     def run_data_extraction_workflow(self, messages, domain):
@@ -145,7 +143,7 @@ class ScienceSyncWorkflow:
             db.close_connection()
             return True
         except Exception as e:
-            self.log.error(f"Could not insert the data into the database. Exception  {e}")
+            self.log.error(f" (run_insert_data_into_database): Could not insert the data into the database. Exception  {e}")
         return False
 
     def run_database_check_and_get_missing_titles(self, article_titles, table_name):
@@ -236,36 +234,8 @@ class ScienceSyncWorkflow:
             delivery_manager = DataDeliveryManager(preference=preference, data=data)
             delivery_manager.make_delivery()
         except Exception as e:
-            self.log.error(f"Could not run data delivery workflow. Exception  {e}")
+            self.log.error(f"Could not run data delivery workflow. Exception: {e}")
             return
-
-
-
-
-class MSAuthCodeWindow:
-    def __init__(self, root, number):
-        self.root = root
-        self.root.title("Number Display")
-        self.root.geometry("200x200")  # Set the window size to 200x200
-        self.number = number
-
-        self.create_widgets()
-
-    def create_widgets(self):
-        # Create a label to display the number
-        self.label = ctk.CTkLabel(self.root, text=f"Number: {self.number}", font=('Arial', 14))
-        self.label.pack(pady=20)  # Adjusted padding for better appearance
-
-        # Create a button to copy the number to the clipboard and close the window
-        self.copy_button = ctk.CTkButton(self.root, text="Copy to Clipboard", command=self.copy_and_close)
-        self.copy_button.pack(pady=20)  # Adjusted padding for better appearance
-
-    def copy_and_close(self):
-        self.root.clipboard_clear()
-        self.root.clipboard_append(str(self.number))
-        messagebox.showinfo("Copied", "Code copied to clipboard")
-        self.root.destroy()
-
 
 
 if __name__ == '__main__':

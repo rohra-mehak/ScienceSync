@@ -19,7 +19,6 @@ import community as community_louvain
 import matplotlib.cm as cm
 from modules.database_services import ArticleDatabase
 from scipy.spatial.distance import pdist, squareform
-import warnings
 
 class ClusterEngine:
     """
@@ -28,16 +27,6 @@ class ClusterEngine:
     Attributes:
         articles_data (pd.DataFrame): DataFrame containing article data.
 
-    Methods:
-        jaccard_similarity(set1, set2): Compute Jaccard similarity between two sets.
-        calculate_jaccard_similarity(): Calculate Jaccard similarity between articles based on DOI sets.
-        perform_clustering(data, n_clusters=10, method="Agglomerative", metric="euclidean"):
-            Perform clustering on the articles based on their similarities.
-        build_a_louvain_cluster(similarity_df): Build a Louvain cluster and visualize the graph.
-        analyse_cluster_results(clusters, data, method):
-            Analyse the results of clustering.
-        analyse_optimal_cluster_number_k(min_k, max_k, similarity_dataframe, method="KMeans"):
-            Find the optimal number of clusters based on silhouette scores.
     """
 
     def __init__(self, data):

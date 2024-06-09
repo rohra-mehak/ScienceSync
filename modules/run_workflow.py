@@ -35,21 +35,6 @@ def _extract_metadata(workflow, messages, service_choice):
     return workflow.run_data_extraction_workflow(messages=messages, domain=service_choice)
 
 
-def _check_database(workflow, title_list, table_name):
-    """
-    Check the database for existing titles.
-
-    Args:
-    - workflow (ScienceSyncWorkflow): Instance of ScienceSyncWorkflow.
-    - title_list (list): List of titles to check in the database.
-    - table_name (str): Name of the table in the database.
-
-    Returns:
-    - list: List of titles not found in the database.
-    """
-    return workflow.run_database_check_and_get_missing_titles(article_titles=title_list, table_name=table_name)
-
-
 def _acquire_references_from_crossref(workflow, titles_not_in_db):
     """
     Acquire references from CrossRef for titles not found in the database.
@@ -61,9 +46,8 @@ def _acquire_references_from_crossref(workflow, titles_not_in_db):
     Returns:
     - dict: Dictionary containing reference information.
     """
-    confirm = input(f"Need to process {len(titles_not_in_db)} titles from CrossRef. Continue? (Y/N): ")
-    if confirm.upper() == "Y":
-        return workflow.run_crossref_rest_service_workflow(article_titles=titles_not_in_db)
+
+    return workflow.run_crossref_rest_service_workflow(article_titles=titles_not_in_db)
 
 
 def _update_article_table_with_references(workflow, reference_info, table_name):
@@ -145,15 +129,13 @@ def _acquire_data(workflow, service_choice, app, days_ago):
     Returns:
     - Tuple: List of titles, DataFrame containing articles data, and a flag indicating success.
     """
-    if not service_choice:
-        return
-
     workflow.log.info(f"Domain service for authentication is {service_choice}")
     app.update_info_text("Acquiring E-mail data")
     msgs = _get_messages(workflow, service_choice, days_ago, app)
     if not msgs:
         app.update_info_text("No messages found. Please check your e-mails in the given days")
-        return
+        workflow.log.error(f"no messages retrieved. msg was a None")
+        return None, None, False
     workflow.log.info("Auth workflow complete. Messages from Google scholar received")
     app.update_info_text("Running meta data extraction workflow")
     title_list, articles_full = _extract_metadata(workflow, msgs, service_choice)
@@ -161,9 +143,10 @@ def _acquire_data(workflow, service_choice, app, days_ago):
     articles = articles_full[articles_full['lang'] == 'en']
     articles_copy = articles.drop(columns=["lang"]).copy()
     if not title_list or not isinstance(articles_copy, pd.DataFrame):
-        return
+        workflow.log.error(f"data not extracted from (_extract_metadata) inside (_acquire_data)")
+        return None, None, False
     app.update_info_text("Articles MetaData Extraction workflow complete")
-    workflow.log.info("Articles MetaData Extraction workflow complete.")
+    workflow.log.info("Articles MetaData Extraction workflow complete. (_acquire data)")
     return title_list, articles_copy, True
 
 
@@ -179,9 +162,10 @@ def _check_database_for_existing_titles(workflow, title_list, table_name):
     Returns:
     - list: List of titles not found in the database.
     """
-    titles_not_in_db = _check_database(workflow, title_list, table_name=table_name)
+    titles_not_in_db = workflow.run_database_check_and_get_missing_titles(article_titles=title_list, table_name=table_name)
+
     if not titles_not_in_db:
-        workflow.log.error("titles_not_in_db returned a None.")
+        workflow.log.error("titles_not_in_db not returned correctly . (_check_database_for_existing_titles)")
         return []
     elif len(titles_not_in_db) == 0:
         return []
@@ -242,6 +226,7 @@ def _acquire_data_from_database_and_make_cluster_analysis(workflow, table_name, 
     df = _get_data_from_database(workflow, table_name=table_name, start_date=start_date,
                                  end_date=end_date)
     if not isinstance(df, pd.DataFrame):
+        workflow.log.error("could not get data from database as a df")
         return None , None
     workflow.log.info("Data from database is acquired.")
     results = workflow.run_clustering_workflow(data=df, method=method, n_clusters=n_clusters, metric=metric)
@@ -289,13 +274,26 @@ def run_science_sync_workflow_phase_1(service_choice, app, table_name, days_ago)
     """
     workflow = ScienceSyncWorkflow()
     try:
-        title_list, articles_full, _ = _acquire_data(workflow, service_choice, app, days_ago)
+        title_list, articles_full, acquired = _acquire_data(workflow, service_choice, app, days_ago)
+        if not acquired:
+           workflow.log.error("Could not acquire data from e-mails")
+           app.update_info_text("ERROR: Could not acquire email data. Please try again. Check logs for more details")
+           return
+
         app.update_info_text(f"{len(title_list)} number of articles acquired")
         workflow.log.info(f"{len(title_list)} number of articles acquired")
+
         titles_not_in_db = _check_database_for_existing_titles(workflow, title_list, table_name=table_name)
         articles_not_in_db = articles_full[articles_full["Title"].isin(titles_not_in_db)]
         if len(titles_not_in_db) > 0:
-            workflow.run_insert_data_into_database(articles_not_in_db, table_name)
+
+            inserted_data = workflow.run_insert_data_into_database(articles_not_in_db, table_name)
+            if not inserted_data:
+                workflow.log.error("Could not insert data into database ")
+                app.update_info_text(
+                    "ERROR : Could not insert email data. Please try again. Check logs for more details")
+                return
+
             app.update_info_text(f"Need to retrieve references for {len(titles_not_in_db)} articles for similarity analysis out of . \n "
                                  f"Please check the terminal window to provide confirmation")
             confirmation = input(f"Need to retrieve refernces for {len(titles_not_in_db)} articles for similarity analysis.\n"
@@ -307,14 +305,14 @@ def run_science_sync_workflow_phase_1(service_choice, app, table_name, days_ago)
                 app.update_info_text("Retrieving references for articles")
                 references_info = _get_additional_information_from_crossref(workflow, titles_not_in_db)
                 if not references_info:
-                   workflow.log.info("There were no references retrieved for the given data")
-                else :
+                   workflow.log.error("There were no references retrieved for the given data")
+                else:
                     updated = _update_article_table_with_references(workflow, references_info, table_name=table_name)
                     if not updated:
                         workflow.log.warning("references could not be loaded to the database")
             else:
-                app.update_info_text("Inserting data without references")
-                workflow.run_insert_data_into_database(articles_not_in_db, table_name)
+                app.update_info_text("Inserted data without references")
+
         else:
             workflow.log.info("Running updates...")
             app.update_info_text("Articles already in the database. Making updates")

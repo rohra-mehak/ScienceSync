@@ -1,0 +1,4 @@
+2024-06-10 00:12:45,953 - log - INFO - logger.py - <module> - Logging from the shared logger
+2024-06-10 00:12:45,953 - log - ERROR - logger.py - <module> - An error occurred in the shared logger
+2024-06-10 00:18:22,512 - INFO - [logger.py:96 -             <module>() ] Logging from the shared logger
+2024-06-10 00:18:22,512 - ERROR - [logger.py:97 -             <module>() ] An error occurred in the shared logger
