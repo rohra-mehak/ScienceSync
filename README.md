@@ -1,5 +1,5 @@
 # Science Sync
-This system is designed to enhance the management and analysis of scholarly alerts by integrating several automated processes. The core functionalities include:
+This system is designed to enhance the data management, access and analysis of Google Scholar Alerts sent to emails by integrating several automated processes. The core functionalities include:
 
 ## Overview 
 
@@ -8,14 +8,14 @@ This system is designed to enhance the management and analysis of scholarly aler
 Gmail and Outlook Connectivity: The system connects to your Gmail or Outlook accounts to retrieve Google Scholar alerts.
 
  #### Alert Retrieval and Parsing
-  Google Scholar alerts are automatically fetched and parsed to extract relevant information such as titles, authors, publication dates, and links.
+  Google Scholar alerts are automatically fetched and parsed using <i>Beautiful Soup</i> and regular expressions:<i> regex</i> to extract relevant information such as titles, authors, publication dates, and links.
 
 #### Data Storage: 
 
-The parsed information is stored in a robust database for easy access and further processing. The database is designed to handle large volumes of data efficiently.
-Machine Learning-Based Analysis:
+The parsed information is stored in an in-memory db database for easy access and further processing. <i> Sqlite3 </i> is used for it.
 
-#### Clustering: 
+
+#### Machine Learning-Based Analysis: Clustering: 
 The system employs clustering algorithms (such as KMeans, KMedoids, and Agglomerative Clustering) to group similar articles. This helps in identifying trends and patterns in the research data.
 
 #### Similarity Metrics: 
@@ -28,19 +28,29 @@ Results Display: The system provides intuitive visualization tools to display cl
 
 ## Pre-Requsites
 1. Python 3.10 or higher versions
+
+    Official website : https://www.python.org/doc/
 2. pip (for instaling all related dependencies)
-3. your preferred IDE: Visual Studio Code or PyCharm
+    
+    pip installation guide: https://pip.pypa.io/en/stable/installation/
+3. your preferred IDE: Visual Studio Code or PyCharm . 
+    
+    Link to VS Code: https://code.visualstudio.com/Download
+
 
 ## How To Run
 
-1. Download or clone the repository:
-
+1. a. Download or clone the repository:
+    ```
     git clone https://github.com/rohra-mehak/ScienceSync.git
+    ```
+    ```
     cd ScienceSync
+    ```
 
     you need git installed for this. 
 
-    Alternatively:
+    b. Alternatively:
 
     Navigate to: https://github.com/rohra-mehak/ScienceSync
 
@@ -51,12 +61,14 @@ Results Display: The system provides intuitive visualization tools to display cl
     Extract the ZIP file to your desired location.
 
 2. Navigate to the root folder directory:
-
+   ```
    cd yourpath/to/ScienceSync
+   ```
 
 3. Install all dependencies:
-
+   ```
    pip install requirements.txt
+   ```
 
 4. Configure credentials
    
@@ -72,17 +84,19 @@ Results Display: The system provides intuitive visualization tools to display cl
    { "application_id" : "your_app_id",
    "client_secret" : "your_client_secret"}
    ```
-   and save the credentials as  <i> credentials_msgraph.json </i>
-
+   Navigate to ScienceSync/secrets and save the credentials as  <i> credentials_msgraph.json </i>
 
    b. For access to Gmail, Google API is used.
-   Process on how to do register and obtain token is described here:
-   Section: Environment Setup
+   Process on how to do register and obtain tokens is described here:
+   
    https://developers.google.com/gmail/api/quickstart/python#set_up_your_environment
+
+   Additional information on working with Google APIs and getting started can be found here:
+   https://developers.google.com/workspace/guides/get-started#5_steps_to_get_started
 
    credentials as available as a downloadable file, download the json file:
 
-   Navigato to ScienceSync/secrets and save the credentials as <i>credentials.json </i>
+   Navigate to ScienceSync/secrets and save the credentials as <i>credentials.json </i>
 
 
 5. Navigate to <i> ScienceSync/app.py </i>
