@@ -67,7 +67,7 @@ Results Display: The system provides intuitive visualization tools to display cl
 
 3. Install all dependencies:
    ```bash
-   pip install requirements.txt
+   pip install -r requirements.txt
    ```
 
 4. Configure credentials
