@@ -40,13 +40,14 @@ Results Display: The system provides intuitive visualization tools to display cl
 
 3. your preferred IDE: Visual Studio Code or others.
     
-    Link to VS Code: https://code.visualstudio.com/Download
+    VS Code download page: https://code.visualstudio.com/Download
+    (recommended)Python extension in VS Code Market place: https://code.visualstudio.com/docs/editor/extension-marketplace
 
 
 
 ## How To Run
 
-1. ### a. Download or clone the repository:
+1. ### a.clone the repository:
     ```bash
     git clone https://github.com/rohra-mehak/ScienceSync.git
     ```
@@ -56,7 +57,7 @@ Results Display: The system provides intuitive visualization tools to display cl
 
     you need git installed for this.
 
-    ### b. Alternatively:
+    ### b. Alternatively Download the code:
 
       Navigate to: https://github.com/rohra-mehak/ScienceSync
 
@@ -98,7 +99,9 @@ Results Display: The system provides intuitive visualization tools to display cl
    .\venv\Scripts\activate
    ```
    
-   Once it is activated , we can proceed to install dependencies
+   Once it is activated, you will see `(venv)` prefix to your command line path,
+   
+   we can now proceed to install dependencies
 
 4. ### Install all dependencies
    
@@ -156,11 +159,13 @@ By following the above instructions, you will successfully configure your creden
 * `metric` (the similarity metric to use -> euclidean / jaccard)
 
 
-**After making sure all steps are successfully complete and all dependencies have been installed, 
-run the file `app.py` to start the program.**
+6. ### Running the main file 
+  **After making sure all steps are successfully complete and all dependencies have been installed, 
+    Make sure you are in the root Science sync directory. 
+    run the file `app.py` using the command on your terminal, to start the program.**
 
 ```bash
-   pip install -r requirements.txt
+   python app.py
    ```
 ## Sample Snapshots
 
