@@ -70,6 +70,7 @@ class DataExtractor:
                     authors.append(str(author.text))
         except Exception as e:
             print(f"Could not extract data from this particular journal email: {e}")
+            # TODO change this way of error handling
             titles.append("")
             authors.append("")
             links.append("")
@@ -119,6 +120,7 @@ class DataExtractor:
             list: A list containing article records.
         """
         articles_data_full = []
+        # TODO better error handling
         for dt in articles_data:
             cited_author = dt[0]
             titles, authors, links, abstracts, save_links = dt[1]

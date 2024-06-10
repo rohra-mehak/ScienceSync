@@ -9,6 +9,7 @@ from modules.database_services import ArticleDatabase
 from modules.clustering import ClusterEngine
 from modules.logger import Log
 
+
 class ScienceSyncWorkflow:
     """
     Class to encapsulate the ScienceSync workflow.
@@ -20,11 +21,13 @@ class ScienceSyncWorkflow:
 
     def run_rest_service_workflow(self, service_choice, days_ago, app):
         """
-        Run the REST service workflow based on the chosen domain.
+        Run the REST service workflow based on the chosen service.
 
         Args:
-            service_choice (str): The chosen domain ("Google" or "Outlook").
-            days_ago (int): no of days to lookback in the email messages
+            - service_choice (str): The chosen service ("Google" or "Outlook").
+            - days_ago (int): no of days to lookback in the email messages
+            - app: The application interface object.
+
 
         Returns:
             list: List of email messages.
@@ -49,7 +52,7 @@ class ScienceSyncWorkflow:
                 graph_app, flow = graph_client.init_flow()
                 app.update_info_text(f"Please refer to the following user code: {graph_client.user_code}")
                 graph_client.acquire_access_token(graph_app, flow)
-                self.log.info("Getting google scholar email from user mailbox")
+                self.log.info("Getting google scholar emails from user mailbox")
                 messages = graph_client.get_user_email_via_rest_service(sender='scholaralerts-noreply@google.com',
                                                                         days_ago=days_ago)
             else:
@@ -122,7 +125,7 @@ class ScienceSyncWorkflow:
                 references = entry["Journal_Info"][0]['references']
                 db.update_doi_references(table_name, title_val=title, doi_val=doi, references_val=references)
             db.close_connection()
-            return  True
+            return True
         except Exception as e:
             self.log.error(f"Could not combine references. Exception  {e}")
             return False
@@ -130,6 +133,7 @@ class ScienceSyncWorkflow:
     def run_insert_data_into_database(self, df, table_name):
         """
         Insert data into the database.
+        Returns bool value indicating success
 
         Args:
             df (DataFrame): DataFrame containing data.
@@ -142,7 +146,8 @@ class ScienceSyncWorkflow:
             db.close_connection()
             return True
         except Exception as e:
-            self.log.error(f" (run_insert_data_into_database): Could not insert the data into the database. Exception  {e}")
+            self.log.error(
+                f" (run_insert_data_into_database): Could not insert the data into the database. Exception  {e}")
         return False
 
     def run_database_check_and_get_missing_titles(self, article_titles, table_name):
@@ -163,7 +168,7 @@ class ScienceSyncWorkflow:
             db.close_connection()
             return titles_not_in_db
         except Exception as e:
-            self.log.error(f"Could not run database check and get missing titles. Exception  {e}")
+            self.log.error(f"Could not run database check and get missing titles. Exception: {e}")
             return
 
     def get_data_between_dates_from_database(self, table_name, start_date, end_date):
@@ -205,8 +210,9 @@ class ScienceSyncWorkflow:
 
         Args:
             data (DataFrame): DataFrame containing data.
-            method (str): Clustering method (default is "KMeans").
-            n_clusters (int): Number of clusters (default is 15).
+            method (str): Clustering method (default is "KMedoids").
+            n_clusters (int): Number of clusters (default is 10).
+            metric: (str) distance metric to be used for clustering
         """
         try:
             self.log.info(f"Initiating clustering workflow.")

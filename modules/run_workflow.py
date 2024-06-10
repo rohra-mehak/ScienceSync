@@ -118,18 +118,22 @@ def _acquire_data(workflow, service_choice, app, days_ago):
     app.update_info_text("Acquiring E-mail data")
     msgs = _get_messages(workflow, service_choice, days_ago, app)
     if not msgs:
-        app.update_info_text("No messages found. Please check your e-mails in the given days")
-        workflow.log.error(f"no messages retrieved. msg was a None")
+        app.update_info_text("No messages found or retrieved. Please check your e-mails in the given days")
+        workflow.log.error(f"no messages retrieved.")
         return None, None, False
+
     workflow.log.info("Auth workflow complete. Messages from Google scholar received")
     app.update_info_text("Running meta data extraction workflow")
+
     title_list, articles_full = _extract_metadata(workflow, msgs, service_choice)
     articles_full['lang'] = articles_full['Title'].apply(lambda x: ld.detect(x))
     articles = articles_full[articles_full['lang'] == 'en']
     articles_copy = articles.drop(columns=["lang"]).copy()
+
     if not title_list or not isinstance(articles_copy, pd.DataFrame):
-        workflow.log.error(f"data not extracted from (_extract_metadata) inside (_acquire_data)")
+        workflow.log.error(f"titles or articles were not extracted correctly")
         return None, None, False
+
     app.update_info_text("Articles MetaData Extraction workflow complete")
     workflow.log.info("Articles MetaData Extraction workflow complete. (_acquire data)")
     return title_list, articles_copy, True
@@ -150,7 +154,7 @@ def _check_database_for_existing_titles(workflow, title_list, table_name):
     titles_not_in_db = workflow.run_database_check_and_get_missing_titles(article_titles=title_list, table_name=table_name)
 
     if not titles_not_in_db:
-        workflow.log.error("titles_not_in_db not returned correctly . (_check_database_for_existing_titles)")
+        workflow.log.error("titles_not_in_db not returned correctly ")
         return []
     elif len(titles_not_in_db) == 0:
         return []
@@ -249,20 +253,23 @@ def run_science_sync_workflow_phase_2(table_name, days_ago, method , n_clusters,
 
 def run_science_sync_workflow_phase_1(service_choice, app, table_name, days_ago):
     """
-    Run phase 1 of the Science Sync workflow.
+    Run phase 1 of the Science Sync workflow. i.e
+    get email service choice , authorise user, retrieve email data , extract article information from alerts
+    ,get references if required, save everything to a database.
 
     Args:
     - service_choice (str): The service choice for data acquisition.
-    - app: The application object.
+    - app: The application interface object.
     - table_name (str): Name of the table in the database.
-    - days_ago (int): Number of days back to retrieve data (default: 30).
+    - days_ago (int): Number of days back to retrieve data (default: 14).
     """
     workflow = ScienceSyncWorkflow()
     try:
         title_list, articles_full, acquired = _acquire_data(workflow, service_choice, app, days_ago)
         if not acquired:
            workflow.log.error("Could not acquire data from e-mails")
-           app.update_info_text("ERROR: Could not acquire email data. Please try again. Check logs for more details")
+           app.update_info_text("ERROR: Could not acquire data from e-mails. Please try again. Check logs for more "
+                                "details")
            return
 
         app.update_info_text(f"{len(title_list)} number of articles acquired")
@@ -281,9 +288,12 @@ def run_science_sync_workflow_phase_1(service_choice, app, table_name, days_ago)
 
             app.update_info_text(f"Need to retrieve references for {len(titles_not_in_db)} articles for similarity analysis out of . \n "
                                  f"Please check the terminal window to provide confirmation")
-            confirmation = input(f"Need to retrieve refernces for {len(titles_not_in_db)} articles for similarity analysis.\n"
-                                 f"This process can take a few hours if a lot of data is required. Additionally,you can skip this and "
-                                 f"proceed to view summarised information. Do you wish to proceed ? Y/N?")
+
+            # TODO future. to find a way to optimise references retrieval and add different ways to confirm
+            confirmation = input(f"Need to retrieve more references for {len(titles_not_in_db)} articles for similarity analysis.\n"
+                                 f"This process can take a few hours if a lot of data is required. Additionally,"
+                                 f"you can skip this and"
+                                 f"proceed to view summarised information with available data. Do you wish to proceed with retrieval ? Y/N?")
 
             if confirmation == "Y":
                 time.sleep(1)
@@ -300,7 +310,7 @@ def run_science_sync_workflow_phase_1(service_choice, app, table_name, days_ago)
 
         else:
             workflow.log.info("Running updates...")
-            app.update_info_text("Articles already in the database. Making updates")
+            app.update_info_text("Running updates")
             articles_not_in_db_titles_and_date = articles_not_in_db[["Title", "ReceivedDate"]]
             _update_titles_date_in_database(workflow, table_name, articles_not_in_db_titles_and_date)
         app.update_info_text("full data acquisition is complete. will take a few mins to execute. please close this "

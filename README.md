@@ -164,6 +164,8 @@ The initial screen keeps updating the user about progress of the system and erro
 
 Logs can be used to identify any problem encountered. They provide the exact line, method and file where some exception or error occured.
 
+Wait for the process to finish executing and for the results interface to load.
+
 ### After finishing up the process -> Click on All Data to view an itemised list of all extracted articles 
 ![Initial Results Screen](https://github.com/rohra-mehak/ScienceSync/blob/master/static/media/all_data_view.png?raw=true)
 
