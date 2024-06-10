@@ -86,17 +86,8 @@ Results Display: The system provides intuitive visualization tools to display cl
    mkdir database
    ```
    
-3. ### Install all dependencies
-   
-   run the following command and wait for all dependencies to finish
-   installing.
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-   
-4. ### Configure a virtual environment
+  
+3. ### Configure a virtual environment
    In your IDE, make sure you are in the `ScienceSync` directory.
    go to the terminal window and run the following commands
 
@@ -125,7 +116,16 @@ Results Display: The system provides intuitive visualization tools to display cl
    
    Once it is activated, you may see the `(venv)` prefix to your command line path.
 
-   ### Configure the IDE to use the Virtual Environment
+4. ### Install all dependencies
+   
+   run the following command and wait for all dependencies to finish
+   installing.
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+5. ### Configure the IDE to use the Virtual Environment
 
    To ensure your IDE uses the correct Python interpreter from your virtual environment, you generally need to configure the IDE to recognize and use the virtual environment. 
    Here’s a generalized approach for VS code
@@ -144,7 +144,7 @@ Results Display: The system provides intuitive visualization tools to display cl
 
 
 
-5. ### Configuring Credentials (GoogleAPI or GraphAPI)
+6. ### Configuring Credentials (GoogleAPI or GraphAPI)
 
 To access your email account, you'll need to obtain your own client ID and client secret tokens. Depending on your email service (Outlook or Gmail), follow the appropriate steps below:
 
@@ -178,7 +178,7 @@ Additional resources and information on working with Google APIs can be found he
 By following the above instructions, you will successfully configure your credentials for accessing your email account using either MS Graph or Google API.
 
 
-6. Navigate to `ScienceSync/app.py`
+7. Navigate to `ScienceSync/app.py`
 
    there are various parameters that can be set before running the program. 
    However it is recommended to leave the default values as they are.
@@ -190,7 +190,7 @@ By following the above instructions, you will successfully configure your creden
 * `metric` (the similarity metric to use -> euclidean / jaccard)
 
 
-7. ### Running the main file 
+8. ### Running the main file 
   **After making sure all steps are successfully completed and all dependencies have been installed, 
     Make sure you are in the root Science sync directory.
     To start the program, run the following command on your terminal**
