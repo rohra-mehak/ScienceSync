@@ -86,8 +86,18 @@ Results Display: The system provides intuitive visualization tools to display cl
    mkdir database
    ```
    
-3. ### Configure a virtual environment
-   In your IDE, make sure you are in the ScienceSync directory
+3. ### Install all dependencies
+   
+   run the following command and wait for all dependencies to finish
+   installing.
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+   
+4. ### Configure a virtual environment
+   In your IDE, make sure you are in the `ScienceSync` directory.
    go to the terminal window and run the following commands
 
    Example for VS Code:
@@ -132,17 +142,9 @@ Results Display: The system provides intuitive visualization tools to display cl
       - Select the interpreter located in your virtual environment `(venv)` directory. It will typically look like `./venv/bin/python` or `.\venv\Scripts\python.exe` on Windows.
   
 
-5. ### Install all dependencies
-   
-   run the following command and wait for all dependencies to finshing
-   installing.
-
-   ```bash
-   pip install -r requirements.txt
-   ```
 
 
-4. ### Configuring Credentials (GoogleAPI or GraphAPI)
+5. ### Configuring Credentials (GoogleAPI or GraphAPI)
 
 To access your email account, you'll need to obtain your own client ID and client secret tokens. Depending on your email service (Outlook or Gmail), follow the appropriate steps below:
 
@@ -176,7 +178,7 @@ Additional resources and information on working with Google APIs can be found he
 By following the above instructions, you will successfully configure your credentials for accessing your email account using either MS Graph or Google API.
 
 
-5. Navigate to `ScienceSync/app.py`
+6. Navigate to `ScienceSync/app.py`
 
    there are various parameters that can be set before running the program. 
    However it is recommended to leave the default values as they are.
@@ -188,7 +190,7 @@ By following the above instructions, you will successfully configure your creden
 * `metric` (the similarity metric to use -> euclidean / jaccard)
 
 
-6. ### Running the main file 
+7. ### Running the main file 
   **After making sure all steps are successfully completed and all dependencies have been installed, 
     Make sure you are in the root Science sync directory.
     To start the program, run the following command on your terminal**
