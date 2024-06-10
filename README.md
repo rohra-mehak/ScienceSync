@@ -134,3 +134,31 @@ Results Display: The system provides intuitive visualization tools to display cl
  <b> After making sure all steps are successfully complete and all dependencies have been installed, 
 run the file <i> app.py </i> to start the program. </b>
 
+## Sample Snapshots
+
+Arrows are simply illustrative indicators.
+
+### Initial Screen
+
+![Initial Screen](https://github.com/rohra-mehak/ScienceSync/blob/master/static/media/step1.png?raw=true)
+
+### Redirection to Authorisation
+
+![Redirection Message Screen](https://github.com/rohra-mehak/ScienceSync/blob/master/static/media/step2.png?raw=true)
+
+The authorisation continues on your browser and this will depend on the service you chose.
+The initial screen keeps updating the user about progress of the system and errors encountered if any.
+
+Logs can be used to identify any problem encountered. They provide the exact line, method and file where some exception or error occured.
+
+### After finishing up the process -> Click on All Data to view an itemised list of all extracted articles 
+![Initial Results Screen](https://github.com/rohra-mehak/ScienceSync/blob/master/static/media/all_data_view.png?raw=true)
+
+### Viewing the scrollable itemised list of articles. Click on a single article to view more information
+![Click article Screen](https://github.com/rohra-mehak/ScienceSync/blob/master/static/media/view_article.png?raw=true)
+
+### Article Information on the Right Hand Tab. This includes additional functionalities to Navigate to Article, Save on Google Scholar.
+### Additional Export Options below and also Display settings for UI scaling and Themes 
+![Article Information Screen](https://github.com/rohra-mehak/ScienceSync/blob/master/static/media/article%20info.png?raw=true)
+
+### Similarly One can go on to see the article groups and view related articles.
