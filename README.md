@@ -88,24 +88,51 @@ Results Display: The system provides intuitive visualization tools to display cl
    
 3. ### Configure a virtual environment
    In your IDE, make sure you are in the ScienceSync directory
-   go the terminal window and run the following commands
+   go to the terminal window and run the following commands
+
+   Example for VS Code:
+   
+   Create a virtual env directory called `venv` in the root `ScienceSync` directory
+   
    ```bash
-   python -m venv venv
+   1. python -m venv venv
    ```
    
+   This Execution Policy command is used in the context of a Windows PowerShell and is not applicable for other OS.
    ```bash
    Set-ExecutionPolicy Unrestricted -Scope Process
    ```
-   
+   Activate the Environment
+
+   Windows 
    ```bash
-   .\venv\Scripts\activate
+   2. .\venv\Scripts\activate
+   ```
+   MacOS / Linux
+   ```bash
+   2. source venv/bin/activate
    ```
    
-   Once it is activated, you will see `(venv)` prefix to your command line path,
-   
-   we can now proceed to install dependencies
+   Once it is activated, you may see the `(venv)` prefix to your command line path.
 
-4. ### Install all dependencies
+   ### Configure the IDE to use the Virtual Environment
+
+   To ensure your IDE uses the correct Python interpreter from your virtual environment, you generally need to configure the IDE to recognize and use the virtual environment. 
+   Here’s a generalized approach for VS code
+
+   ### Visual Studio Code (VS Code)
+   
+   1. *Open Command Palette:*
+      - Press Cmd+Shift+P (macOS) or Ctrl+Shift+P (Windows/Linux) to open the command palette.
+   
+   2. *Select Interpreter:*
+      - Type Python: Select Interpreter -> Enter Interpreter Path -> Find Interpreter.
+   
+   3. *Choose Virtual Environment:*
+      - Select the interpreter located in your virtual environment `(venv)` directory. It will typically look like `./venv/bin/python` or `.\venv\Scripts\python.exe` on Windows.
+  
+
+5. ### Install all dependencies
    
    run the following command and wait for all dependencies to finshing
    installing.
