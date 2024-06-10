@@ -6,7 +6,7 @@ from modules.run_workflow import run_science_sync_workflow_phase_1
 
 # parameters
 table_name = "articles"
-days_ago = 600
+days_ago = 14
 method = "KMedoids"
 metric = "jaccard"
 n_clusters = 10
