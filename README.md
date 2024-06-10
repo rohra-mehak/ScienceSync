@@ -1,6 +1,6 @@
 # Science Sync
 This system is designed to enhance the data management, access and analysis of Google Scholar Alerts sent to emails by integrating several automated processes.
-The core functionalities include:
+The core functionalities are described below.
 
 ## Overview 
 
