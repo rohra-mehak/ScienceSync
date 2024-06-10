@@ -41,7 +41,8 @@ Results Display: The system provides intuitive visualization tools to display cl
 3. your preferred IDE: Visual Studio Code or others.
     
     VS Code download page: https://code.visualstudio.com/Download
-    (recommended)Python extension in VS Code Market place: https://code.visualstudio.com/docs/editor/extension-marketplace
+   
+    (recommended) Python extension in VS Code Market place: https://code.visualstudio.com/docs/editor/extension-marketplace
 
 
 
