@@ -29,6 +29,6 @@ if __name__ == "__main__":
     grouped_clusters, articles_full = run_science_sync_workflow_phase_2(table_name=table_name, days_ago=days_ago,
                                                                         method=method, n_clusters=n_clusters,
                                                                         metric=metric)
-    if grouped_clusters or articles_full:
-        results_app = DisplayResultsPage(grouped_clusters, articles_full)
-        results_app.mainloop()
+
+    results_app = DisplayResultsPage(grouped_clusters, articles_full)
+    results_app.mainloop()

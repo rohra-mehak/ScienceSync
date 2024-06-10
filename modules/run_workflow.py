@@ -291,7 +291,7 @@ def run_science_sync_workflow_phase_1(service_choice, app, table_name, days_ago)
                 f"This may takes from a few minutes to an hour based on the traffic in server")
 
             time.sleep(1)
-            app.update_info_text("Retrieving references for articles")
+            app.update_info_text(f"Retrieving references for {len(titles_not_in_db)} articles")
             references_info = _get_additional_information_from_crossref(workflow, titles_not_in_db)
             if not references_info:
                 workflow.log.error("There were no references retrieved for the given data")
@@ -301,7 +301,7 @@ def run_science_sync_workflow_phase_1(service_choice, app, table_name, days_ago)
                     workflow.log.warning("References could not be loaded to the database")
                     app.update_info_text("References could not be loaded to the database")
                 else:
-                    app.update_info_text("Inserted data without references. Clustering may fail")
+                    app.update_info_text("Inserted data without references.")
                     time.sleep(3)
 
         else:
