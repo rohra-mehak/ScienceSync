@@ -1,5 +1,6 @@
 # Science Sync
-This system is designed to enhance the data management, access and analysis of Google Scholar Alerts sent to emails by integrating several automated processes. The core functionalities include:
+This system is designed to enhance the data management, access and analysis of Google Scholar Alerts sent to emails by integrating several automated processes.
+The core functionalities include:
 
 ## Overview 
 
@@ -30,17 +31,23 @@ Results Display: The system provides intuitive visualization tools to display cl
 1. Python 3.10 or higher versions
 
     Official website : https://www.python.org/doc/
+
+
 2. pip (for instaling all related dependencies)
     
     pip installation guide: https://pip.pypa.io/en/stable/installation/
-3. your preferred IDE: Visual Studio Code or PyCharm . 
+
+
+3. your preferred IDE: Visual Studio Code ,PyCharm or other.
     
     Link to VS Code: https://code.visualstudio.com/Download
+
+    Link to PyCharm: https://www.jetbrains.com/pycharm/
 
 
 ## How To Run
 
-1. a. Download or clone the repository:
+1. ### a. Download or clone the repository:
     ```bash
     git clone https://github.com/rohra-mehak/ScienceSync.git
     ```
@@ -48,28 +55,28 @@ Results Display: The system provides intuitive visualization tools to display cl
     cd ScienceSync
     ```
 
-    you need git installed for this. 
+    you need git installed for this.
 
-    b. Alternatively:
+    ### b. Alternatively:
 
-    Navigate to: https://github.com/rohra-mehak/ScienceSync
+      Navigate to: https://github.com/rohra-mehak/ScienceSync
 
-    Click the "Code" button. 
+      Click the `Code` button. 
 
-    Select "Download ZIP".
+      Select `Download ZIP`.
 
-    Extract the ZIP file to your desired location.
+      Extract the ZIP file to your desired location.
 
-2. Navigate to the root folder directory:
+2. ### Navigate to the root folder directory:
    ```bash
    cd yourpath/to/ScienceSync
    ```
    
    On Linux and macOS
-   Use the <i> mkdir </i> command followed by the name of the directory
+   Use the `mkdir` command followed by the name of the directory
    
    On Windows
-   Use the <i> mkdir </i> command (or the equivalent <i> md </i> command) in the terminal of your IDE.
+   Use the `mkdir` command (or the equivalent `md` command) in the terminal of your IDE.
    ```bash
    mkdir secrets
    ```
@@ -80,7 +87,7 @@ Results Display: The system provides intuitive visualization tools to display cl
    
 
 
-3. Install all dependencies
+3. ### Install all dependencies
    
    run the following command:
 
@@ -88,57 +95,63 @@ Results Display: The system provides intuitive visualization tools to display cl
    pip install -r requirements.txt
    ```
 
-4. Configure credentials ( GoogleAPI or GraphAPI)
-   
-   You need to obtain your own client id and client secret tokens. You may opt for one depending on 
-   where our e-mail account may be located.
 
-   a. For access to Outlook, MS graph is used.
-   Process on how to do register and obtain token is described here: 
-   
-   https://learn.microsoft.com/en-us/azure/azure-monitor/logs/api/register-app-for-token?tabs=portal
+4. ### Configuring Credentials (GoogleAPI or GraphAPI)
 
-   Once you have the application id and client secret
-   Navigate to ScienceSync/secrets and save the token / credentials as  <i> credentials_msgraph.json </i>, in the following format
-   ```bash
-   { "application_id" : "your_app_id",
-      "client_secret" : "your_client_secret"
+To access your email account, you'll need to obtain your own client ID and client secret tokens. Depending on your email service (Outlook or Gmail), follow the appropriate steps below:
+
+#### a. Accessing Outlook (using MS Graph)
+
+1. **Register Your Application:**
+   Follow the process outlined in the Microsoft documentation to register your application and obtain the necessary tokens: [Register an app for token](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/api/register-app-for-token?tabs=portal).
+
+2. **Save Credentials:**
+   Once you have your application ID and client secret, save them in a file named `credentials_msgraph.json` in the `ScienceSync/secrets` directory. The file should have the following format:
+
+   ```json
+   {
+     "application_id": "your_app_id",
+     "client_secret": "your_client_secret"
    }
    ```
 
-   b. For access to Gmail, Google API is used.
-   Process on how to do register and obtain tokens is described here:
-   
-   https://developers.google.com/gmail/api/quickstart/python#set_up_your_environment
+#### b. Accessing Gmail (using Google API)
 
-   Additional information on working with Google APIs and getting started can be found here:
-   https://developers.google.com/workspace/guides/get-started#5_steps_to_get_started
+1. **Set Up Your Environment:**
+   Follow the steps in the Google documentation to register your application and obtain the necessary tokens: [Set up your environment](https://developers.google.com/gmail/api/quickstart/python#set_up_your_environment).
 
-   credentials are available as a downloadable file, download the json file:
+2. **Download and Save Credentials:**
+   After registering, download the JSON file containing your credentials. Save this file as `credentials.json` in the `ScienceSync/secrets` directory.
 
-   Navigate to ScienceSync/secrets and save the credentials as <i>credentials.json </i>
+Additional resources and information on working with Google APIs can be found here: [Getting started with Google APIs](https://developers.google.com/workspace/guides/get-started#5_steps_to_get_started).
+
+---
+
+By following the above instructions, you will successfully configure your credentials for accessing your email account using either MS Graph or Google API.
 
 
-5. Navigate to <i> ScienceSync/app.py </i>
+5. Navigate to `ScienceSync/app.py`
 
    there are various parameters that can be set before running the program. 
    However it is recommended to leave the default values as they are.
 
-* days_ago (no of days to look back while going through the mailbox)
-* table_name (the name of the table in your article database which will be created and referred by the system)
-* n_clusters (number of groups [for clustering articles together] to divide the articles into)
-* method (the clustering methodology -> K-Means / KMedoids or Agglomerative)
-* metric (the similairity metric to use -> euclidean / jaccard)
+* `days_ago` (no of days to look back while going through the mailbox)
+* `table_name` (the name of the table in your article database which will be created and referred by the system)
+* `n_clusters` (number of groups [for clustering articles together] to divide the articles into)
+* `method` (the clustering methodology -> K-Means / KMedoids or Agglomerative)
+* `metric` (the similairity metric to use -> euclidean / jaccard)
 
 
- <b> After making sure all steps are successfully complete and all dependencies have been installed, 
-run the file <i> app.py </i> to start the program. </b>
+**After making sure all steps are successfully complete and all dependencies have been installed, 
+run the file `app.py` to start the program.**
 
 ## Sample Snapshots
 
 Arrows are simply illustrative indicators.
 
 ### Initial Screen
+
+Depending on the service chosen and whether credentials could be located by the program, this part might be different. 
 
 ![Initial Screen](https://github.com/rohra-mehak/ScienceSync/blob/master/static/media/step1.png?raw=true)
 
