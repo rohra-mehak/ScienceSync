@@ -50,7 +50,7 @@ Results Display: The system provides intuitive visualization tools to display cl
 
 ## How To Run
 
-1. ### a.clone the repository: [git](https://git-scm.com/downloads) is required
+1. ### a. Clone the repository: ([git](https://git-scm.com/downloads) is required)
 
     ```bash
     git clone https://github.com/rohra-mehak/ScienceSync.git
