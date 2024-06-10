@@ -13,24 +13,26 @@ Gmail and Outlook Connectivity: The system connects to your Gmail or Outlook acc
 
 #### Data Storage: 
 
-The parsed information is stored in an in-memory db database for easy access and further processing. <i> Sqlite3 </i> is used for it.
+The parsed information is stored in an in-memory database using `Sqlite3` for easy access and further processing. 
 
 
-#### Machine Learning-Based Analysis: Clustering: 
-The system employs clustering algorithms (such as KMeans, KMedoids, and Agglomerative Clustering) to group similar articles. This helps in identifying trends and patterns in the research data.
+#### Machine Learning-Based Analysis: 
+
+#### Clustering: 
+The system employs clustering algorithms (such as KMeans, KMedoids, and Agglomerative Clustering) to group similar articles. 
 
 #### Similarity Metrics: 
 Jaccard similarity / Euclidean can be used to measure the similarity between different articles based on their references.
 
 #### Interfaces: 
-interfaces facilitate communication with the system.
+Interfaces built using `customtkinter` facilitate communication with the system.
 
 Results Display: The system provides intuitive visualization tools to display clustering results and other analytical insights.
 
 ## Pre-Requsites
 1. Python 3.10 or higher versions
 
-    Official website : https://www.python.org/doc/
+    Official website for download: https://www.python.org/doc/
 
 
 2. pip (for instaling all related dependencies)
@@ -48,7 +50,8 @@ Results Display: The system provides intuitive visualization tools to display cl
 
 ## How To Run
 
-1. ### a.clone the repository:
+1. ### a.clone the repository: [git](https://git-scm.com/downloads) is required
+
     ```bash
     git clone https://github.com/rohra-mehak/ScienceSync.git
     ```
@@ -56,8 +59,7 @@ Results Display: The system provides intuitive visualization tools to display cl
     cd ScienceSync
     ```
 
-    you need git installed for this.
-
+    
     ### b. Alternatively Download the code:
 
       Navigate to: https://github.com/rohra-mehak/ScienceSync
@@ -73,11 +75,9 @@ Results Display: The system provides intuitive visualization tools to display cl
    cd yourpath/to/ScienceSync
    ```
    
-   On Linux and macOS
-   Use the `mkdir` command followed by the name of the directory
+   On Linux , macOS or Windows
+   Use the `mkdir` command followed by the name of the directory in the terminal of your IDE.
    
-   On Windows
-   Use the `mkdir` command (or the equivalent `md` command) in the terminal of your IDE.
    ```bash
    mkdir secrets
    ```
@@ -86,16 +86,17 @@ Results Display: The system provides intuitive visualization tools to display cl
    mkdir database
    ```
    
-3. ### Configure a virtual environment (this step is optional but highly recommended)
+3. ### Configure a virtual environment
    In your IDE, make sure you are in the ScienceSync directory
    go the terminal window and run the following commands
    ```bash
    python -m venv venv
    ```
-
+   
    ```bash
    Set-ExecutionPolicy Unrestricted -Scope Process
    ```
+   
    ```bash
    .\venv\Scripts\activate
    ```
@@ -136,7 +137,7 @@ To access your email account, you'll need to obtain your own client ID and clien
 #### b. Accessing Gmail (using Google API)
 
 1. **Set Up Your Environment:**
-   Follow the steps in the Google documentation to register your application and obtain the necessary tokens: [Set up your environment](https://developers.google.com/gmail/api/quickstart/python#set_up_your_environment).
+   Follow the steps mentioned in the Google documentation (Set up your Environment Section only) to register your application and obtain the necessary tokens: [Set up your environment](https://developers.google.com/gmail/api/quickstart/python#set_up_your_environment).
 
 2. **Download and Save Credentials:**
    After registering, download the JSON file containing your credentials. Save this file as `credentials.json` in the `ScienceSync/secrets` directory.
@@ -161,9 +162,9 @@ By following the above instructions, you will successfully configure your creden
 
 
 6. ### Running the main file 
-  **After making sure all steps are successfully complete and all dependencies have been installed, 
-    Make sure you are in the root Science sync directory. 
-    run the file `app.py` using the command on your terminal, to start the program.**
+  **After making sure all steps are successfully completed and all dependencies have been installed, 
+    Make sure you are in the root Science sync directory.
+    To start the program, run the following command on your terminal**
 
 ```bash
    python app.py
