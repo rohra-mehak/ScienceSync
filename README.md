@@ -38,11 +38,10 @@ Results Display: The system provides intuitive visualization tools to display cl
     pip installation guide: https://pip.pypa.io/en/stable/installation/
 
 
-3. your preferred IDE: Visual Studio Code ,PyCharm or other.
+3. your preferred IDE: Visual Studio Code or others.
     
     Link to VS Code: https://code.visualstudio.com/Download
 
-    Link to PyCharm: https://www.jetbrains.com/pycharm/
 
 
 ## How To Run
@@ -85,11 +84,26 @@ Results Display: The system provides intuitive visualization tools to display cl
    mkdir database
    ```
    
+3. ### Configure a virtual environment (this step is optional but highly recommended)
+   In your IDE, make sure you are in the ScienceSync directory
+   go the terminal window and run the following commands
+   ```bash
+   python -m venv venv
+   ```
 
-
-3. ### Install all dependencies
+   ```bash
+   Set-ExecutionPolicy Unrestricted -Scope Process
+   ```
+   ```bash
+   .\venv\Scripts\activate
+   ```
    
-   run the following command:
+   Once it is activated , we can proceed to install dependencies
+
+4. ### Install all dependencies
+   
+   run the following command and wait for all dependencies to finshing
+   installing.
 
    ```bash
    pip install -r requirements.txt
@@ -139,12 +153,15 @@ By following the above instructions, you will successfully configure your creden
 * `table_name` (the name of the table in your article database which will be created and referred by the system)
 * `n_clusters` (number of groups [for clustering articles together] to divide the articles into)
 * `method` (the clustering methodology -> K-Means / KMedoids or Agglomerative)
-* `metric` (the similairity metric to use -> euclidean / jaccard)
+* `metric` (the similarity metric to use -> euclidean / jaccard)
 
 
 **After making sure all steps are successfully complete and all dependencies have been installed, 
 run the file `app.py` to start the program.**
 
+```bash
+   pip install -r requirements.txt
+   ```
 ## Sample Snapshots
 
 Arrows are simply illustrative indicators.

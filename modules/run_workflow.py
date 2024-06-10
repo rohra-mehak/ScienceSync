@@ -5,7 +5,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 
 
-def _get_messages(workflow, service_choice ,days_ago, app):
+def _get_messages(workflow, service_choice, days_ago, app):
     """
     Retrieve messages from a specified service.
 
@@ -65,7 +65,6 @@ def _update_article_table_with_references(workflow, reference_info, table_name):
     - bool: True if insertion is successful, False otherwise.
     """
     return workflow.run_update_article_tables_with_references(retrieved_info=reference_info, table_name=table_name)
-
 
 
 def _get_data_from_database(workflow, table_name, start_date, end_date):
@@ -151,7 +150,8 @@ def _check_database_for_existing_titles(workflow, title_list, table_name):
     Returns:
     - list: List of titles not found in the database.
     """
-    titles_not_in_db = workflow.run_database_check_and_get_missing_titles(article_titles=title_list, table_name=table_name)
+    titles_not_in_db = workflow.run_database_check_and_get_missing_titles(article_titles=title_list,
+                                                                          table_name=table_name)
 
     if not titles_not_in_db:
         workflow.log.error("titles_not_in_db not returned correctly ")
@@ -216,7 +216,7 @@ def _acquire_data_from_database_and_make_cluster_analysis(workflow, table_name, 
                                  end_date=end_date)
     if not isinstance(df, pd.DataFrame):
         workflow.log.error("could not get data from database as a df")
-        return None , None
+        return None, None
     workflow.log.info("Data from database is acquired.")
     results = workflow.run_clustering_workflow(data=df, method=method, n_clusters=n_clusters, metric=metric)
     if not isinstance(results, pd.DataFrame):
@@ -225,14 +225,14 @@ def _acquire_data_from_database_and_make_cluster_analysis(workflow, table_name, 
     return results, df
 
 
-def run_science_sync_workflow_phase_2(table_name, days_ago, method , n_clusters, metric):
+def run_science_sync_workflow_phase_2(table_name, days_ago, method, n_clusters, metric):
     """
     Run phase 2 of the Science Sync workflow.
 
     Args:
     - table_name (str): Name of the table in the database.
     - days_ago (int): Number of days back to retrieve data (default: 14).
-    - method (str): Clustering method to use (default: "KMeans").
+    - method (str): Clustering method to use (default: "KMedoids").
     - n_clusters (int): Number of clusters (default: 10).
 
     Returns:
@@ -267,10 +267,10 @@ def run_science_sync_workflow_phase_1(service_choice, app, table_name, days_ago)
     try:
         title_list, articles_full, acquired = _acquire_data(workflow, service_choice, app, days_ago)
         if not acquired:
-           workflow.log.error("Could not acquire data from e-mails")
-           app.update_info_text("ERROR: Could not acquire data from e-mails. Please try again. Check logs for more "
-                                "details")
-           return
+            workflow.log.error("Could not acquire data from e-mails")
+            app.update_info_text("ERROR: Could not acquire data from e-mails. Please try again. Check logs for more "
+                                 "details")
+            return
 
         app.update_info_text(f"{len(title_list)} number of articles acquired")
         workflow.log.info(f"{len(title_list)} number of articles acquired")
@@ -286,27 +286,23 @@ def run_science_sync_workflow_phase_1(service_choice, app, table_name, days_ago)
                     "ERROR : Could not insert email data. Please try again. Check logs for more details")
                 return
 
-            app.update_info_text(f"Need to retrieve references for {len(titles_not_in_db)} articles for similarity analysis out of . \n "
-                                 f"Please check the terminal window to provide confirmation")
+            app.update_info_text(
+                f"Need to retrieve references for {len(titles_not_in_db)} articles for similarity analysis. \n "
+                f"This may takes from a few minutes to an hour based on the traffic in server")
 
-            # TODO future. to find a way to optimise references retrieval and add different ways to confirm
-            confirmation = input(f"Need to retrieve more references for {len(titles_not_in_db)} articles for similarity analysis.\n"
-                                 f"This process can take a few hours if a lot of data is required. Additionally,"
-                                 f"you can skip this and"
-                                 f"proceed to view summarised information with available data. Do you wish to proceed with retrieval ? Y/N?")
-
-            if confirmation == "Y":
-                time.sleep(1)
-                app.update_info_text("Retrieving references for articles")
-                references_info = _get_additional_information_from_crossref(workflow, titles_not_in_db)
-                if not references_info:
-                   workflow.log.error("There were no references retrieved for the given data")
-                else:
-                    updated = _update_article_table_with_references(workflow, references_info, table_name=table_name)
-                    if not updated:
-                        workflow.log.warning("references could not be loaded to the database")
+            time.sleep(1)
+            app.update_info_text("Retrieving references for articles")
+            references_info = _get_additional_information_from_crossref(workflow, titles_not_in_db)
+            if not references_info:
+                workflow.log.error("There were no references retrieved for the given data")
             else:
-                app.update_info_text("Inserted data without references")
+                updated = _update_article_table_with_references(workflow, references_info, table_name=table_name)
+                if not updated:
+                    workflow.log.warning("References could not be loaded to the database")
+                    app.update_info_text("References could not be loaded to the database")
+                else:
+                    app.update_info_text("Inserted data without references. Clustering may fail")
+                    time.sleep(3)
 
         else:
             workflow.log.info("Running updates...")
@@ -319,7 +315,5 @@ def run_science_sync_workflow_phase_1(service_choice, app, table_name, days_ago)
 
     except Exception as e:
         workflow.log.error(f"An error occurred:{e}")
-        app.update_info_text(f"An error seems to have occured : {e}. Please close this window and try again after fixes.")
-
-
-
+        app.update_info_text(
+            f"An error seems to have occured : {e}. Please close this window and try again after fixes.")

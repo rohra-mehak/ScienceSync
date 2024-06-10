@@ -122,7 +122,7 @@ class ScienceSyncWorkflow:
             for entry in retrieved_info:
                 title = entry["Title"]
                 doi = entry["Journal_Info"][0]['DOI']
-                references = entry["Journal_Info"][0]['references']
+                references = [val for val in entry["Journal_Info"][0]['references'] if val is not None]
                 db.update_doi_references(table_name, title_val=title, doi_val=doi, references_val=references)
             db.close_connection()
             return True
