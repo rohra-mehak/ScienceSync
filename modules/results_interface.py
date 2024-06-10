@@ -1,4 +1,3 @@
-import os
 import webbrowser
 import customtkinter
 import pandas as pd

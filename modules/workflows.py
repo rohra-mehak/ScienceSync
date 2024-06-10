@@ -7,7 +7,6 @@ from modules.data_extractor_for_scholar_messages import DataExtractor
 from modules.crossRef_rest_service import CrossRefAPI
 from modules.database_services import ArticleDatabase
 from modules.clustering import ClusterEngine
-from modules.data_delivery_service import DataDeliveryManager
 from modules.logger import Log
 
 class ScienceSyncWorkflow:
@@ -220,22 +219,6 @@ class ScienceSyncWorkflow:
         except Exception as e:
             self.log.error(f"Could not run clustering workflow. Exception  {e}")
             return None
-
-    def run_data_delivery_workflow(self, data, preference):
-        """
-        Run the data delivery workflow.
-
-        Args:
-            data (DataFrame): DataFrame containing data.
-            preference (str): Delivery preference ("local_storage", "email", or "display").
-        """
-        try:
-            self.log.info(f"Initiating data delivery workflow.")
-            delivery_manager = DataDeliveryManager(preference=preference, data=data)
-            delivery_manager.make_delivery()
-        except Exception as e:
-            self.log.error(f"Could not run data delivery workflow. Exception: {e}")
-            return
 
 
 if __name__ == '__main__':

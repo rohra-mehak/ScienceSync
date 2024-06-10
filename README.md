@@ -65,6 +65,11 @@ Results Display: The system provides intuitive visualization tools to display cl
    cd yourpath/to/ScienceSync
    ```
    
+   On Linux and macOS
+   Use the <i> mkdir </i> command followed by the name of the directory
+   
+   On Windows
+   Use the <i> mkdir </i> command (or the equivalent <i> md </i> command) in the terminal of your IDE.
    ```bash
    mkdir secrets
    ```
@@ -75,26 +80,31 @@ Results Display: The system provides intuitive visualization tools to display cl
    
 
 
-3. Install all dependencies:
+3. Install all dependencies
+   
+   run the following command:
+
    ```bash
    pip install -r requirements.txt
    ```
 
-4. Configure credentials
+4. Configure credentials ( GoogleAPI or GraphAPI)
    
    You need to obtain your own client id and client secret tokens. You may opt for one depending on 
    where our e-mail account may be located.
 
    a. For access to Outlook, MS graph is used.
-   Process on how to do register and obtain token is described here: https://learn.microsoft.com/en-us/azure/azure-monitor/logs/api/register-app-for-token?tabs=portal
+   Process on how to do register and obtain token is described here: 
+   
+   https://learn.microsoft.com/en-us/azure/azure-monitor/logs/api/register-app-for-token?tabs=portal
 
-   Once you app application id and client secret
-   Navigato to ScienceSync/secrets
+   Once you have the application id and client secret
+   Navigate to ScienceSync/secrets and save the token / credentials as  <i> credentials_msgraph.json </i>, in the following format
    ```bash
    { "application_id" : "your_app_id",
-   "client_secret" : "your_client_secret"}
+      "client_secret" : "your_client_secret"
+   }
    ```
-   Navigate to ScienceSync/secrets and save the credentials as  <i> credentials_msgraph.json </i>
 
    b. For access to Gmail, Google API is used.
    Process on how to do register and obtain tokens is described here:
@@ -104,11 +114,23 @@ Results Display: The system provides intuitive visualization tools to display cl
    Additional information on working with Google APIs and getting started can be found here:
    https://developers.google.com/workspace/guides/get-started#5_steps_to_get_started
 
-   credentials as available as a downloadable file, download the json file:
+   credentials are available as a downloadable file, download the json file:
 
    Navigate to ScienceSync/secrets and save the credentials as <i>credentials.json </i>
 
 
 5. Navigate to <i> ScienceSync/app.py </i>
-and run the file to start the program.
+
+   there are various parameters that can be set before running the program. 
+   However it is recommended to leave the default values as they are.
+
+* days_ago (no of days to look back while going through the mailbox)
+* table_name (the name of the table in your article database which will be created and referred by the system)
+* n_clusters (number of groups [for clustering articles together] to divide the articles into)
+* method (the clustering methodology -> K-Means / KMedoids or Agglomerative)
+* metric (the similairity metric to use -> euclidean / jaccard)
+
+
+ <b> After making sure all steps are successfully complete and all dependencies have been installed, 
+run the file <i> app.py </i> to start the program. </b>
 

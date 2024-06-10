@@ -1,5 +1,7 @@
 /venv/
-/static/
+/static/cluster_results
+/static/downloads
+/static/templates
 /Lib/
 /Scripts/
 /.idea/*

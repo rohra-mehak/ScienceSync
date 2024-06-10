@@ -1,6 +1,6 @@
 import time
 import langdetect as ld
-from modules.sciencesync_workflow import ScienceSyncWorkflow
+from modules.workflows import ScienceSyncWorkflow
 import pandas as pd
 from datetime import datetime, timedelta
 
@@ -99,21 +99,6 @@ def _perform_clustering(workflow, df, method, n_clusters):
     - DataFrame: DataFrame containing clustering results.
     """
     return workflow.run_clustering_workflow(df, method=method, n_clusters=n_clusters)
-
-
-def _deliver_results(workflow, results, preference="local_storage"):
-    """
-    Deliver clustering results.
-
-    Args:
-    - workflow (ScienceSyncWorkflow): Instance of ScienceSyncWorkflow.
-    - results (DataFrame): DataFrame containing clustering results.
-    - preference (str): Preferred delivery method (default: "local_storage").
-
-    Returns:
-    - bool: True if delivery is successful, False otherwise.
-    """
-    return workflow.run_data_delivery_workflow(results, preference=preference)
 
 
 def _acquire_data(workflow, service_choice, app, days_ago):
