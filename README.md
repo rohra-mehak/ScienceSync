@@ -29,7 +29,7 @@ Interfaces built using `customtkinter` facilitate communication with the system.
 
 Results Display: The system provides intuitive visualization tools to display clustering results and other analytical insights.
 
-## Pre-Requsites
+## Pre-Requisites
 1. Python 3.10 or higher versions
 
     Official website for download: https://www.python.org/doc/
