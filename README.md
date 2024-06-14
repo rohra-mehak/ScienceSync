@@ -151,7 +151,7 @@ To access your email account, you'll need to obtain your own client ID and clien
 #### a. Accessing Outlook (using MS Graph)
 
 1. **Register Your Application:**
-   Follow the process outlined in the Microsoft documentation to register your application and obtain the necessary tokens: [Register an app for token](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/api/register-app-for-token?tabs=portal).
+   Follow the process outlined in the Microsoft documentation to register your application and obtain the necessary tokens: [Register an app for token](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app)).
 
 2. **Save Credentials:**
    Once you have your application ID and client secret, save them in a file named `credentials_msgraph.json` in the `ScienceSync/secrets` directory. The file should have the following format:
