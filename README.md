@@ -29,7 +29,7 @@ Interfaces built using `customtkinter` facilitate communication with the system.
 
 Results Display: The system provides intuitive visualization tools to display clustering results and other analytical insights.
 
-## Pre-Requsites
+## Pre-Requisites
 1. Python 3.10 or higher versions
 
     Official website for download: https://www.python.org/doc/
@@ -86,36 +86,65 @@ Results Display: The system provides intuitive visualization tools to display cl
    mkdir database
    ```
    
+  
 3. ### Configure a virtual environment
-   In your IDE, make sure you are in the ScienceSync directory
-   go the terminal window and run the following commands
+   In your IDE, make sure you are in the `ScienceSync` directory.
+   go to the terminal window and run the following commands
+
+   Example for VS Code:
+   
+   Create a virtual env directory called `venv` in the root `ScienceSync` directory
+   
    ```bash
-   python -m venv venv
+   1. python -m venv venv
    ```
    
+   This Execution Policy command is used in the context of a Windows PowerShell and is not applicable for other OS.
    ```bash
    Set-ExecutionPolicy Unrestricted -Scope Process
    ```
-   
+   Activate the Environment
+
+   Windows 
    ```bash
-   .\venv\Scripts\activate
+   2. .\venv\Scripts\activate
+   ```
+   MacOS / Linux
+   ```bash
+   2. source venv/bin/activate
    ```
    
-   Once it is activated, you will see `(venv)` prefix to your command line path,
-   
-   we can now proceed to install dependencies
+   Once it is activated, you may see the `(venv)` prefix to your command line path.
 
 4. ### Install all dependencies
    
-   run the following command and wait for all dependencies to finshing
+   run the following command and wait for all dependencies to finish
    installing.
 
    ```bash
    pip install -r requirements.txt
    ```
 
+5. ### Configure the IDE to use the Virtual Environment
 
-4. ### Configuring Credentials (GoogleAPI or GraphAPI)
+   To ensure your IDE uses the correct Python interpreter from your virtual environment, you generally need to configure the IDE to recognize and use the virtual environment. 
+   Here’s a generalized approach for VS code
+
+   ### Visual Studio Code (VS Code)
+   
+   1. *Open Command Palette:*
+      - Press Cmd+Shift+P (macOS) or Ctrl+Shift+P (Windows/Linux) to open the command palette.
+   
+   2. *Select Interpreter:*
+      - Type Python: Select Interpreter -> Enter Interpreter Path -> Find Interpreter.
+   
+   3. *Choose Virtual Environment:*
+      - Select the interpreter located in your virtual environment `(venv)` directory. It will typically look like `./venv/bin/python` or `.\venv\Scripts\python.exe` on Windows.
+  
+
+
+
+6. ### Configuring Credentials (GoogleAPI or GraphAPI)
 
 To access your email account, you'll need to obtain your own client ID and client secret tokens. Depending on your email service (Outlook or Gmail), follow the appropriate steps below:
 
@@ -149,7 +178,7 @@ Additional resources and information on working with Google APIs can be found he
 By following the above instructions, you will successfully configure your credentials for accessing your email account using either MS Graph or Google API.
 
 
-5. Navigate to `ScienceSync/app.py`
+7. Navigate to `ScienceSync/app.py`
 
    there are various parameters that can be set before running the program. 
    However it is recommended to leave the default values as they are.
@@ -161,7 +190,7 @@ By following the above instructions, you will successfully configure your creden
 * `metric` (the similarity metric to use -> dice / jaccard)
 
 
-6. ### Running the main file 
+8. ### Running the main file 
   **After making sure all steps are successfully completed and all dependencies have been installed, 
     Make sure you are in the root Science sync directory.
     To start the program, run the following command on your terminal**
