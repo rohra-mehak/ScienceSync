@@ -10,10 +10,10 @@ import sys
 table_name = "articles"
 days_ago = 14
 # possible params for "method"
-# KMeans , KMedoids , Agglomerative
+# KMedoids , Agglomerative
 method = "KMedoids"
 # possible params for "metric"
-# jaccard , euclidean
+# jaccard , dice
 metric = "jaccard"
 n_clusters = 10
 

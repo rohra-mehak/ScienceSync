@@ -80,15 +80,15 @@ class ClusterEngine:
         ]
         return non_zero_similarity_df
 
-    def perform_clustering(self, data, n_clusters=10, method="Agglomerative", metric="euclidean"):
+    def perform_clustering(self, data, n_clusters=10, method="Agglomerative", metric="jaccard"):
         """
         Perform clustering on the articles based on their similarities.
 
         Args:
             data (pd.DataFrame): DataFrame containing article data.
             n_clusters (int, optional): Number of clusters. Defaults to 10.
-            method (str, optional): Clustering algorithm to use. Defaults to "Agglomerative". Options: "KMeans", "KMedoids", "Agglomerative".
-            metric (str, optional): Distance metric to use. Defaults to "euclidean". Options: "euclidean", "jaccard".
+            method (str, optional): Clustering algorithm to use. Defaults to "KMedoids". Options: "KMedoids", "Agglomerative".
+            metric (str, optional): Distance metric to use. Defaults to "jaccard". Options: "dice", "jaccard".
 
         Returns:
             dict: Dictionary containing cluster results.
@@ -109,29 +109,31 @@ class ClusterEngine:
         X = np.array(article_vectors)
 
         algorithms = {
-            "KMeans": KMeans(n_clusters=n_clusters, init="k-means++", n_init='auto') if metric == "euclidean" else None,
-            "KMedoids": KMedoids(n_clusters=n_clusters, method="pam") if metric == "euclidean" else KMedoids(
+            "KMedoids": KMedoids(
                 n_clusters=n_clusters, method="pam", metric="precomputed"),
-            "Agglomerative": AgglomerativeClustering(n_clusters=n_clusters, linkage="average") if metric == "euclidean" else AgglomerativeClustering(
-                n_clusters=n_clusters, linkage="complete", metric="precomputed")
+            "Agglomerative":  AgglomerativeClustering(
+                n_clusters=n_clusters, linkage="average", metric="precomputed")
         }
 
         cluster = algorithms[method]
-        if metric != "euclidean":
+        if metric != "jaccard":
+            dice_distances = pdist(X, metric='dice')
+            distance_matrix = squareform(dice_distances)
+            s_matrix = np.nan_to_num(distance_matrix, nan=0)
+            cluster.fit(s_matrix)
+        else:
             jaccard_distances = pdist(X, metric='jaccard')
             distance_matrix = squareform(jaccard_distances)
             cluster.fit(distance_matrix)
-        else:
-            cluster.fit(X)
 
         cluster_groups = {i: [] for i in np.unique(cluster.labels_)}
         for i, label in enumerate(cluster.labels_):
             cluster_groups[label].append(df['Title'].iloc[i])
 
-        for cluster_id, titles in cluster_groups.items():
-            print(f"Cluster {cluster_id}:")
-            for title in titles:
-                print(f"- {title}")
+        # for cluster_id, titles in cluster_groups.items():
+        #     print(f"Cluster {cluster_id}:")
+        #     for title in titles:
+        #         print(f"- {title}")
         return cluster_groups
 
     def build_a_louvain_cluster(self, similarity_df):
