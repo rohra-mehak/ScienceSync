@@ -80,15 +80,15 @@ class ClusterEngine:
         ]
         return non_zero_similarity_df
 
-    def perform_clustering(self, data, n_clusters=10, method="Agglomerative", metric="jaccard"):
+    def perform_clustering(self, data, n_clusters=10, method="Kmedoids", metric="jaccard"):
         """
         Perform clustering on the articles based on their similarities.
 
         Args:
             data (pd.DataFrame): DataFrame containing article data.
             n_clusters (int, optional): Number of clusters. Defaults to 10.
-            method (str, optional): Clustering algorithm to use. Defaults to "KMedoids". Options: "KMedoids", "Agglomerative".
-            metric (str, optional): Distance metric to use. Defaults to "jaccard". Options: "dice", "jaccard".
+            method (str, optional): Clustering algorithm to use. Defaults to "KMedoids". Options: "KMedoids", Kmedoids++ , Agglomerative_avg, "Agglomerative_complete".
+            metric (str, optional): metric to use. Defaults to "jaccard". Options: "dice", "jaccard", "sokalsneath".
 
         Returns:
             dict: Dictionary containing cluster results.
@@ -110,21 +110,30 @@ class ClusterEngine:
 
         algorithms = {
             "KMedoids": KMedoids(
-                n_clusters=n_clusters, method="pam", metric="precomputed"),
-            "Agglomerative":  AgglomerativeClustering(
-                n_clusters=n_clusters, linkage="average", metric="precomputed")
+                n_clusters=n_clusters, init="heuristic", method="pam", metric="precomputed"),
+            "KMedoids++": KMedoids(
+                n_clusters=n_clusters, init= "k-medoids++", method="pam", metric="precomputed"),
+            "Agglomerative_avg":  AgglomerativeClustering(
+                n_clusters=n_clusters, linkage="average", metric="precomputed"),
+            "Agglomerative_complete": AgglomerativeClustering(
+                n_clusters=n_clusters, linkage="complete", metric="precomputed")
         }
 
         cluster = algorithms[method]
-        if metric != "jaccard":
+        if metric == "dice":
             dice_distances = pdist(X, metric='dice')
             distance_matrix = squareform(dice_distances)
-            s_matrix = np.nan_to_num(distance_matrix, nan=0)
+            s_matrix = np.nan_to_num(distance_matrix, nan=1)
             cluster.fit(s_matrix)
-        else:
+        elif metric == 'jaccard':
             jaccard_distances = pdist(X, metric='jaccard')
             distance_matrix = squareform(jaccard_distances)
             cluster.fit(distance_matrix)
+        elif metric == "sokalsneath":
+            dice_distances = pdist(X, metric='sokalsneath')
+            distance_matrix = squareform(dice_distances)
+            s_matrix = np.nan_to_num(distance_matrix, nan=1)
+            cluster.fit(s_matrix)
 
         cluster_groups = {i: [] for i in np.unique(cluster.labels_)}
         for i, label in enumerate(cluster.labels_):
@@ -186,15 +195,10 @@ class ClusterEngine:
         """
         silhouette_avg, dbi_score, chi_score = None, None, None
         if len(np.unique(clusters)) > 1:
-            if method in ["KMeans", "KMeans++", "BisectKMeans"]:
-                silhouette_avg = silhouette_score(data, clusters)
-                dbi_score = davies_bouldin_score(data, clusters)
-                chi_score = calinski_harabasz_score(data, clusters)
-            else:
-                m = 1 - data
-                silhouette_avg = silhouette_score(m, clusters, metric='precomputed')
-                dbi_score = davies_bouldin_score(data, clusters)
-                chi_score = calinski_harabasz_score(data, clusters)
+
+            silhouette_avg = silhouette_score(data, clusters)
+            dbi_score = davies_bouldin_score(data, clusters)
+
         else:
             print(f"{method} Analysis Not applicable (only one cluster)")
         return silhouette_avg, dbi_score, chi_score

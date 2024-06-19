@@ -186,8 +186,8 @@ By following the above instructions, you will successfully configure your creden
 * `days_ago` (no of days to look back while going through the mailbox)
 * `table_name` (the name of the table in your article database which will be created and referred by the system)
 * `n_clusters` (number of groups [for clustering articles together] to divide the articles into)
-* `method` (the clustering methodology -> KMedoids or Agglomerative)
-* `metric` (the similarity metric to use -> dice / jaccard)
+* `method` (the clustering methodology -> KMedoids / KMedoids++ /  Agglomerative (average linkage) / Agglomerative (complete linkage))
+* `metric` (the similarity metric to use -> dice / jaccard / sokal and sneath)
 
 
 8. ### Running the main file 
